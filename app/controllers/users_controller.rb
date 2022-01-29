@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     end
 
     def correct_user
-      redirect_to(root_url) unless @user == current_user
+      redirect_to(root_url) unless current_user?(@user)
     end
 
     def admin_user
