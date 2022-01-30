@@ -15,6 +15,12 @@
       <%= f.label :department, class: "label-user--edit" %>
       <%= f.text_field :department, class: "form-control" %>
 
+      <%= f.label :employee_number, class: "label-user--edit" %>
+      <%= f.number_field :employee_number, class: "form-control", min: 001, max: 020 %>
+
+      <%= f.label :card_id, class: "label-user--edit" %>
+      <%= f.number_field :card_id, class: "form-control", min: 001, max: 020 %>
+
       <%= f.label :password, class: "label-user--edit" %>
       <%= f.password_field :password, class: "form-control" %>
 
