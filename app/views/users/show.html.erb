@@ -3,17 +3,17 @@
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td rowspan="2">時間管理表</td>
-      <td>指定勤務開始時間</td>
+      <td>指定勤務開始時間8  :  30  </td>
     </tr>
 
     <tr>
-      <td>指定勤務終了時間</td>
-      <td colspan="3" class="table-active">基本時間</td>
+      <td>指定勤務終了時間17  :  00  </td>
+      <td colspan="3" class="table-active">基本時間<%= format_basic_info(@user.basic_time) %></td>
       <td>初日</td>
     </tr>
 
     <tr>
-      <td>所属</td>
+      <td>所属  :  <%= @user.department.present? ? @user.department : "未所属" %></td> 
       <td>氏名  :  <%= @user.name %></td>
       <td>コード</td>
       <td>0<%= @user.id %></td>
