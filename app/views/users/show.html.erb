@@ -10,8 +10,7 @@
       <td>指定勤務開始時間:8.30<p></p>指定勤務終了時間:17.00</td>
       <td colspan="3" class="table-active">基本時間<%= format_basic_info(@user.basic_time) %></td>
       <td>初日:<%= l(@first_day, format: :short) %></td>
-    </tr>
-
+    </tr>  
     <tr>
       <td>所属:<%= @user.department.present? ? @user.department : "未所属" %></td> 
       <td>氏名:<%= @user.name %></td>
@@ -22,7 +21,14 @@
     </tr>
   </table>
 </div>
-
+<div class="pull-left">
+  <%= link_to "【所属長承認申請のお知らせ】", "#" %>
+  <br><%= link_to "【勤怠変更申請のお知らせ】", "#" %>
+  <br><%= link_to "【残業申請のお知らせ】", "#" %>
+  <br><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+  <%= link_to "csv出力", "#", class: "btn btn-primary" %>
+  <br><%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary"%>
+</div>
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>
@@ -70,16 +76,18 @@
           </td>          
           <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
           <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
+          <td></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
               <%= str_times = working_times(day.started_at, day.finished_at) %>
-              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
+              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
             <% end %>
           </td>
+          <td><%= day.note %></td>          
           <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>
+            
+          </td>
           <td></td>
           <td></td>
           <td colspan="2"></td>          
