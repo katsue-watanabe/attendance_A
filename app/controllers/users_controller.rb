@@ -9,6 +9,11 @@ class UsersController < ApplicationController
     @users = User.paginate(page: params[:page], per_page: 5)
   end
 
+  def import
+    User.import(params[:file])
+    redirect_to users_url
+  end
+
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
