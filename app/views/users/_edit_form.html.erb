@@ -22,8 +22,17 @@
       <%= f.label :password, class: "label-user--edit" %>
       <%= f.password_field :password, class: "form-control" %>
 
-      <%= f.label :password_confirmation, class: "label-user--edit" %>
-      <%= f.password_field :password_confirmation, class: "form-control" %>
+      <%= f.label :basic_time, class: "label-user--edit" %>
+      <%= f.time_field :basic_time, class: "form-control" %>
+
+      <%= f.label :designated_work_start_time, class: "label-user--edit" %>
+      <%= f.time_field :designated_work_start_time, class: "form-control" %>
+
+      <%= f.label :designated_work_end_time, class: "label-user--edit" %>
+      <%= f.time_field :designated_work_end_time, class: "form-control" %>
+
+      <%= f.label :superior, class: "label-user--edit" %>
+      <%= f.text_field :superior, class: "form-control" %>
 
       <%= f.submit "更新", class: "btn btn-primary btn-block btn-user--edit" %>
     <% end %>

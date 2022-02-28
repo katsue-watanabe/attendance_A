@@ -7,7 +7,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :uid
       t.datetime :designated_work_start_time
       t.datetime :designated_work_end_time
-      t.boolean :sperior 
+      t.boolean :superior 
 
       t.timestamps
     end

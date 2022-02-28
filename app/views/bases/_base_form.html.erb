@@ -1,0 +1,23 @@
+      <%= form_with(model: @base, local: true) do |f| %>
+
+        <%= f.label :base_id, class: "label-#{yield(:class_text)}" %>
+        <%= f.number_field :base_id, class: "form-control" %>
+
+        <%= f.label :branch, class: "label-#{yield(:class_text)}" %>
+        <%= f.text_field :branch, class: "form-control" %>
+
+        <%= f.label :base_type, class: "label-#{yield(:class_text)}" %>
+        <select class="form-control input-md" required="required" name="base[information]">
+          <option value="">選択して下さい</option>
+          <option selected="selected" value="出勤">出勤</option>
+          <option value="退勤">退勤</option>
+        </select>            
+
+        <div class="center">
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+        

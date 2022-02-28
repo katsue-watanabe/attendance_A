@@ -1,10 +1,11 @@
 # coding: utf-8
 
-User.create!(name: "渡辺克江",
+User.create!(name: "渡邉優奈",
     email: "sample@email.com",
     password: "password",
     password_confirmation: "password",
-    admin: true)
+    admin: true,
+    superior: true)
 
 20.times do |n|
   name  = Faker::Name.name
