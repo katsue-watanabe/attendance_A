@@ -17,66 +17,34 @@
         <tbody>
           <tr>
             <td>            
-              <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#flame">修正</button>
-                <!-- モーダル:モーダルの枠部分 -->
-                <!-- idとトリガーと紐付け。 fadeでモーダルをフェードインさせます。 -->
-                <div id="flame" class="modal fade" role="dialog">
-                <!-- モーダルの適切な幅とマージンを設定 -->
-                <div class="modal-dialog">
-                  <!-- モーダルコンテンツ:モーダルに表示させる内容-->
-                  <div class="modal-content">
-                    <!-- モーダルコンテンツのヘッダー部分-->
-                    <div class="modal-header">
-                      <h1 class="modal-title">拠点の編集</h1>
-                      <!-- &timesは「×ボタン」の表示-->        
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                      <%= render 'edit_base' %>>
-                    </div>                    
-                  </div>
-                </div>
-                </div>                        
+              <%= link_to "修正", edit_basis_path(base), remote: true, class: "btn btn-primary" %>                                   
             </td>
             <td>
-              <%= link_to "削除", @base, method: :delete,
+              <%= link_to "削除", base, method: :delete,
                   data: { confirm: "削除してもよろしいですか？" },
-                  class: "btn btn-primary" %>              
+                  class: "btn btn-danger" %>              
             </td>
-            <td><%= @base.id %></td>
-            <td><%= @base.branch %></td>
-            <td>出勤</td>
-          </tr>
-          <tr>
-            <td colspan="5">      
-              <div class="panel panel-default">
-                <div class="panel-heading"><button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#flame1">拠点情報追加</button>              
-                  <div id="flame1" class="modal fade" role="dialog">
-                    <!-- モーダルの適切な幅とマージンを設定 -->
-                    <div class="modal-dialog">
-                      <!-- モーダルコンテンツ:モーダルに表示させる内容-->
-                      <div class="modal-content">
-                        <!-- モーダルコンテンツのヘッダー部分-->
-                        <div class="modal-header">
-                          <h1 class="modal-title">拠点情報の追加</h1>
-                          <!-- &timesは「×ボタン」の表示-->
-                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                          <%= render 'new' %>>                   
-                        </div>                  
-                      </div>
-                    </div>
-                  </div>                  
-                </div>
-              </div>
-            </td>           
-          </tr>
+            <td><%= base.base_number %></td>
+            <td><%= base.base_branch %></td>
+            <td><%= base.work_type %></td>
+          </tr>          
         </tbody>
       <% end %>
     </table>
+    <div class="content">
+      <tr>
+        <td colspan="5">      
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <%= link_to "拠点情報の追加", new_basis_path, remote: true, class: "btn btn-primary" %>                              
+            </div>
+          </div>
+        </td>           
+      </tr>
+    </div>
   </div>
 </div>
 
 <!--モーダルウインドウ表示-->
 <div id="edit-base" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="new-base" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

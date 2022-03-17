@@ -1,4 +1,4 @@
-<% provide(:title,@base.branch) %>
+<% provide(:title,@base) %>
 <div>
   <table class="table table-bordered table-condensed base-table" %>
     <tr>
@@ -7,9 +7,9 @@
       <th>拠点種類</th>
     </tr>
     <tr>
-      <td><%= @base.id %></td>
-      <td><%= @base.branch %></td>
-      <td></td>
+      <td><%= @base.base_number %></td>
+      <td><%= @base.base_branch %></td>
+      <td><%= @base.work_type %></td>
     </tr>
   </table>
 </div>

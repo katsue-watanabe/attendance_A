@@ -1,5 +1,5 @@
 class BasesController < ApplicationController
-  before_action :set_base, only: [:index, :show, :edit_base, :update_base, :destroy]
+  before_action :set_base, only: [:show, :edit, :update, :destroy]
   
   def index
     @bases = Base.all
@@ -12,42 +12,42 @@ class BasesController < ApplicationController
     @base = Base.new
   end
 
-  def create
+  def create    
     @base = Base.new(base_params)
-    if @base.save
+    if @base.save     
       flash[:success] = '拠点を追加しました。'
-      redirect_to @base
+      redirect_to bases_url
     else
-      render :new
-    end
-  end
-
-  def edit_base      
-  end
-
-  def update_base
-    if @base.update_attributes(base_params)
-      flash[:success] = "拠点の修正をしました。"
-      redirect_to @base
-    else
+      flash[:danger] = '拠点情報を追加できませんでした。'
       render :index
     end
   end
 
-  def destroy
-    @base.destroy
-    flash[:success] = "#{@base.name}を削除しました。"
-    redirect_to base_url
+  def edit      
   end
 
+  def update    
+    if @base.update_attributes(base_params)
+      flash[:success] = "拠点の修正をしました。"
+      redirect_to bases_url      
+    else
+      render :edit
+    end
+  end
 
-    private
+  def destroy    
+    @base.destroy
+    flash[:success] = "#{@base.base_branch}を削除しました。"
+    redirect_to bases_url
+  end
 
-      def base_params
-        params.require(:base).permit(:base_id, :base_name, :base_type)
-      end
+  private
 
-      def set_base
-        @base = Base.find_by(params[:branch])
-      end
+    def base_params
+      params.require(:base).permit(:base_number, :base_branch, :work_type)
+    end
+
+    def set_base
+      @base = Base.find(params[:id])
+    end
 end

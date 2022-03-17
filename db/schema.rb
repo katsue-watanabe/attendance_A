@@ -24,7 +24,9 @@ ActiveRecord::Schema.define(version: 20220224112113) do
   end
 
   create_table "bases", force: :cascade do |t|
-    t.string "branch"
+    t.integer "base_number"
+    t.string "base_branch"
+    t.string "work_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -43,8 +45,8 @@ ActiveRecord::Schema.define(version: 20220224112113) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2022-02-25 23:00:00"
-    t.datetime "work_time", default: "2022-02-25 22:30:00"
+    t.datetime "basic_time", default: "2022-03-12 23:00:00"
+    t.datetime "work_time", default: "2022-03-12 22:30:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
