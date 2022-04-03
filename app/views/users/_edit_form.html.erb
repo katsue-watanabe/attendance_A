@@ -1,40 +1,36 @@
-<% provide(:title, "Edit_form") %>
+<% provide(:title, 'Edit') %>
 
-<div class="row">
-  <div class="col-md-6">
-    <%= form_with model: user, local: true do |f| %>
-      
-      <%= f.label :name, class: "label-user--edit" %>
-      <%= f.text_field :name, class: "form-control" %>
+<%= form_with(model: @user, local: true) do |f| %>
+  
+  <%= f.label :name, class: "label-user--edit" %>
+  <%= f.text_field :name, class: "form-control" %>
 
-      <%= f.label :email, class: "label-user--edit" %>
-      <%= f.email_field :email, class: "form-control" %>
+  <%= f.label :email, class: "label-user--edit" %>
+  <%= f.email_field :email, class: "form-control" %>
 
-      <%= f.label :department, class: "label-user--edit" %>
-      <%= f.text_field :department, class: "form-control" %>
+  <%= f.label :department, class: "label-user--edit" %>
+  <%= f.text_field :department, class: "form-control" %>
 
-      <%= f.label :employee_number, class: "label-user--edit" %>
-      <%= f.number_field :employee_number, class: "form-control", min: 001, max: 020 %>
+  <%= f.label :employee_number, class: "label-user--edit" %>
+  <%= f.number_field :employee_number, class: "form-control", min: 001, max: 020 %>
 
-      <%= f.label :card_id, class: "label-user--edit" %>
-      <%= f.number_field :card_id, class: "form-control", min: 001, max: 020 %>
+  <%= f.label :card_id, class: "label-user--edit" %>
+  <%= f.number_field :card_id, class: "form-control", min: 001, max: 020 %>
 
-      <%= f.label :password, class: "label-user--edit" %>
-      <%= f.password_field :password, class: "form-control" %>
+  <%= f.label :password, class: "label-user--edit" %>
+  <%= f.password_field :password, class: "form-control" %>
 
-      <%= f.label :basic_time, class: "label-user--edit" %>
-      <%= f.time_field :basic_time, class: "form-control" %>
+  <%= f.label :basic_time, class: "label-user--edit" %>
+  <%= f.time_field :basic_time, class: "form-control" %>
 
-      <%= f.label :designated_work_start_time, class: "label-user--edit" %>
-      <%= f.time_field :designated_work_start_time, class: "form-control" %>
+  <%= f.label :designated_work_start_time, class: "label-user--edit" %>
+  <%= f.time_field :designated_work_start_time, class: "form-control" %>
 
-      <%= f.label :designated_work_end_time, class: "label-user--edit" %>
-      <%= f.time_field :designated_work_end_time, class: "form-control" %>
+  <%= f.label :designated_work_end_time, class: "label-user--edit" %>
+  <%= f.time_field :designated_work_end_time, class: "form-control" %>
 
-      <%= f.label :superior, class: "label-user--edit" %>
-      <%= f.text_field :superior, class: "form-control" %>
+  <%= f.label :superior, class: "label-user--edit" %>
+  <%= f.select :is_released, [['権限なし',0],['権限あり',1]], { include_blank: true, selected: 0 } %>
 
-      <%= f.submit "更新", class: "btn btn-primary btn-block btn-user--edit" %>
-    <% end %>
-  </div>
-</div>
+  <%= f.submit "更新", class: "btn btn-primary btn-block btn-user--edit" %>
+<% end %>

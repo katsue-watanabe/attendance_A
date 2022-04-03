@@ -1,3 +1,73 @@
-// Place all the styles related to the Attendances controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.attendance-table {
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* ユーザー勤怠情報テーブル */
+
+#table-attendances {
+  th {
+    vertical-align: middle;
+    text-align: center;
+  }
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  wday0 {
+    color: red;
+  }
+  wday0 {
+    color: blue;
+  }
+}
+
+
+
+/* 入力フォーム */
+
+.label-signup {
+  margin-top: 5px;
+}
+
+.btn-signup {
+  margin-top: 10px;
+}
+
+.label-attendance--edit {
+  margin-top: 5px;
+}
+
+.btn-attendance--edit {
+  margin-top: 10px;
+}
+
+/* ユーザー一覧ページ */
+
+#table-attendances {
+  td {
+    vertical-align: middle;
+  }  
+}
+
+/* 基本情報編集モーダルウインドウ */
+
+.label-overwork {
+  margin-top: 5px;
+}
+
+.btn-overwork {
+  margin: 15px 0;
+  width: 30%;
+}
+
+/* チェックBOX*/
+
+
+.checkbox-tomorrow {
+  width: auto;
+  margin-left: 25px;
+  span {
+    font-weight: normal;
+  }
+}

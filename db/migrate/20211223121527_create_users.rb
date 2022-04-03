@@ -3,12 +3,11 @@ class CreateUsers < ActiveRecord::Migration[5.1]
     create_table :users do |t|
       t.string :name
       t.string :email
-      t.string :employee_number
-      t.string :uid
+      t.integer :employee_number
+      t.integer :uid
       t.datetime :designated_work_start_time
       t.datetime :designated_work_end_time
-      t.boolean :superior 
-
+      
       t.timestamps
     end
   end

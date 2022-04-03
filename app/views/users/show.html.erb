@@ -22,9 +22,11 @@
   </table>
 </div>
 <div class="pull-left">
-  <%= link_to "【所属長承認申請のお知らせ】", "#" %>
-  <br><%= link_to "【勤怠変更申請のお知らせ】", "#" %>
-  <br><%= link_to "【残業申請のお知らせ】", "#" %>
+  <% if current_user.superior? %>
+    <%= link_to "【所属長承認申請のお知らせ】", "#" %>
+    <br><%= link_to "【勤怠変更申請のお知らせ】", "#" %>
+    <br><%= link_to "【残業申請のお知らせ】", "#" %>
+  <%end %>
   <br><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
   <%= link_to "csv出力", "#", class: "btn btn-primary" %>
   <br><%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary"%>
@@ -65,7 +67,7 @@
       <% @attendances.each do |day| %>
         <tr>
           <td>
-            <%= link_to "残業申請", edit_basic_info_user_path(@user), remort: true, class: "btn btn-primary"%>            
+            <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), remote: true, class: "btn btn-primary"%>                        
           </td>        
           <td><%= l(day.worked_on, format: :short) %></td>
           <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -115,4 +117,4 @@
 </div>
 
 <!--モーダルウインドウ表示-->
-<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

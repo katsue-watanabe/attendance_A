@@ -1,7 +1,9 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month]
-  before_action :logged_in_user, only: [:update, :edit_one_month]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork]
+  before_action :set_attendance, only: [:uodate, :edit_overwork, :update_overwork]
+  before_action :logged_in_user, only: [:update, :edit_one_month, :edit_overwork, :update_overwork]
   before_action :set_one_month, only: :edit_one_month
+ 
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
@@ -25,7 +27,7 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
 
-  def edit_one_month
+  def edit_one_month    
   end
 
   def update_one_month
@@ -39,16 +41,37 @@ class AttendancesController < ApplicationController
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to attendances_edit_one_month_user_url(date: params[:date])   
+    redirect_to attendances_edit_one_month_user_url(date: params[:date])       
   end
-end
 
-def list_of_employees
-  @users = User.all.includes(:attendances)
-end
-
-private
-
-  def attendances_params
-    params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+  def edit_overwork
+    @user = User.find(params[:user_id])
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day)    
   end
+
+  def update_overwork
+    if @attendance.update_attributes(overwork_params)      
+      flash[:success] = "{@user.name}の残業を申請しました。"
+    else
+      flash[:danger] = "{@user.name}残業申請の送信は失敗しました。"
+    end
+    redirect_to @user
+  end
+
+  def list_of_employees
+    @users = User.all.includes(:attendances)
+  end
+
+  private
+    def set_attendance
+      @attendance = Attendance.find(params[:id])
+    end 
+
+    def attendances_params
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
+
+    def overwork_params
+      params.require(:user).permit(attendances: [:overwork_end_time])
+    end
+end

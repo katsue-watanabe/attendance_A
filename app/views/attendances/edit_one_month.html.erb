@@ -23,9 +23,14 @@
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
               <td><%= attendance.time_field :started_at, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
-              <td></td>
-              <td></td>
-              <td><%= attendance.text_field :note, class: "form-control" %></td>
+              <td><%= f.check_box :next_day, id: "next_day" %></td>
+              <td>
+                <% if day.started_at.present? && day.finished_at.present? %>
+                  <%= str_times = working_times(day.started_at, day.finished_at) %>
+                  <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
+                <% end %>
+              </td>              
+              <td><%= f.text_field :process_content, class: "form-control" %></td>
               <td>
                 <select class="form-control">
                   <option></option>

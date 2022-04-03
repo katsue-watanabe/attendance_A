@@ -26,6 +26,6 @@ ja:
           note: 備考
           user: ユーザーID
         bases:
-          base_id: 拠点番号
-          branch: 拠点名
-          base_type: 拠点種類
+          base_number: 拠点番号
+          base_branch: 拠点名
+          work_type: 拠点種類

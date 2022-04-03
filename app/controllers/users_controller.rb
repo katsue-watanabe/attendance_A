@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :list_of_employees]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
   before_action :set_one_month, only: :show
@@ -41,8 +41,10 @@ class UsersController < ApplicationController
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
     else
+      flash[:danger] = "ユーザー情報を更新できません。"
       render :edit
     end
+    debugger
   end
 
   def destroy
@@ -51,22 +53,14 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  def edit_basic_info
-  end
-
-  def update_basic_info
-    if @user.update_attributes(basic_info_params)
-      flash[:success] = "残業を申請しました。"
-    else
-      flash[:danger] = "残業申請の送信は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
-    end
-    redirect_to @user
+  def list_of_employees
+    @users = User.all.includes(:attendances)
   end
 
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :department, :employee_number, :card_id, :password, :basic_time, :designated_work_start_time, :designated_work_endt_time, :superior)
     end
 
     def basic_info_params
