@@ -27,9 +27,7 @@ class UsersController < ApplicationController
     if @user.save
       log_in @user
       flash[:success] = '新規作成に成功しました。'
-      redirect_to @user
-    else
-      render :new  
+      redirect_to @user 
     end
   end
 
@@ -44,7 +42,6 @@ class UsersController < ApplicationController
       flash[:danger] = "ユーザー情報を更新できません。"
       render :edit
     end
-    debugger
   end
 
   def destroy
@@ -59,8 +56,12 @@ class UsersController < ApplicationController
 
   private
 
+    def set_user
+      @user = User.find(params[:id])
+    end
+
     def user_params
-      params.require(:user).permit(:name, :email, :department, :employee_number, :card_id, :password, :basic_time, :designated_work_start_time, :designated_work_endt_time, :superior)
+      params.require(:user).permit(:name, :email, :department, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_endt_time, :superior)
     end
 
     def basic_info_params

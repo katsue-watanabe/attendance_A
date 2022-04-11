@@ -63,6 +63,7 @@ class AttendancesController < ApplicationController
   end
 
   private
+    
     def set_attendance
       @attendance = Attendance.find(params[:id])
     end 
