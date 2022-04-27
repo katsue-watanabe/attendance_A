@@ -88,13 +88,21 @@
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
             <% end %>
           </td>
-          <td><%= day.note %></td>          
-          <td></td>
+          <td><%= day.note %></td>
+          <td><%= l(day.overwork_end_time, format: :hour) if day.overwork_end_time? %></td>
+          <td><%= l(day.overwork_end_time, format: :min) if day.overwork_end_time? %></td>         
           <td>
-            
+            <% if day.designated_work_end_time? && day.overwork_end_time? %>
+              <% if day.next_day == 'false' %>              
+                <%= str_times = working_overwork_times(designated_work_end_time, overwork_end_time) %>
+              <% elsif day.next_day == 'true' %>
+                <%= str_times = working_overwork_next_times(designated_work_end_time, overwork_end_time) %>
+              <% end %>  
+              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
+            <% end %>                       
           </td>
-          <td></td>
-          <td></td>
+          <td><%= day.process_content %></td>
+          <td><%= day.superior_confirmation %></td>
           <td colspan="2"></td>          
         </tr>
       <% end %>

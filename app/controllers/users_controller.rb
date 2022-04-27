@@ -10,8 +10,8 @@ class UsersController < ApplicationController
   end
 
   def import
-    User.import(params[:file])
-    redirect_to users_url
+    User.import(params[:file])    
+    redirect_to users_url 
   end
 
   def show

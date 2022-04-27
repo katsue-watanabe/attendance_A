@@ -1,6 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork]
-  before_action :set_attendance, only: [:uodate, :edit_overwork, :update_overwork]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :update_overwork]  
   before_action :logged_in_user, only: [:update, :edit_one_month, :edit_overwork, :update_overwork]
   before_action :set_one_month, only: :edit_one_month
  
@@ -37,6 +36,7 @@ class AttendancesController < ApplicationController
         attendance.update_attributes!(item)
       end
     end
+    
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
@@ -46,11 +46,13 @@ class AttendancesController < ApplicationController
 
   def edit_overwork
     @user = User.find(params[:user_id])
-    @attendances = @user.attendances.where(worked_on: @first_day..@last_day)    
+    @attendance = Attendance.find(params[:id])      
   end
 
   def update_overwork
-    if @attendance.update_attributes(overwork_params)      
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])  
+    if @attendance.update_attributes(overwork_params)
       flash[:success] = "{@user.name}の残業を申請しました。"
     else
       flash[:danger] = "{@user.name}残業申請の送信は失敗しました。"
@@ -62,17 +64,13 @@ class AttendancesController < ApplicationController
     @users = User.all.includes(:attendances)
   end
 
-  private
+  private    
     
-    def set_attendance
-      @attendance = Attendance.find(params[:id])
-    end 
-
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
     end
 
     def overwork_params
-      params.require(:user).permit(attendances: [:overwork_end_time])
+      params.require(:attendances).permit(:overwork_end_time, :next_day, :process_content, :superior_confirmation)
     end
 end
