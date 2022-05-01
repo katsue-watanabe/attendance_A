@@ -68,7 +68,7 @@
       <% @attendances.each do |day| %>
         <tr>
           <td>
-            <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), remote: true, class: "btn btn-primary"%>                        
+            <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), class: "btn btn-primary"%>                        
           </td>        
           <td><%= l(day.worked_on, format: :short) %></td>
           <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -84,8 +84,13 @@
           <td></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
-              <%= str_times = working_times(day.started_at, day.finished_at) %>
-              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
+              <% if day.next_day == false %>
+                <%= str_times = working_times(day.started_at, day.finished_at) %>
+                <% @total_working_times = @total_working_times.to_f + str_times.to_f %>                                
+              <% else %>
+                <%= str_times = working_next_times(day.started_at, day.finished_at) %>
+                <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>                                
+              <% end %>                            
             <% end %>
           </td>
           <td><%= day.note %></td>
@@ -93,17 +98,16 @@
           <td><%= l(day.overwork_end_time, format: :min) if day.overwork_end_time? %></td>         
           <td>
             <% if day.designated_work_end_time? && day.overwork_end_time? %>
-              <% if day.next_day == 'false' %>              
-                <%= str_times = working_overwork_times(designated_work_end_time, overwork_end_time) %>
-              <% elsif day.next_day == 'true' %>
-                <%= str_times = working_overwork_next_times(designated_work_end_time, overwork_end_time) %>
+              <% if day.next_day == false %>              
+                <%= str_times = working_overwork_times(day.designated_work_end_time, day.overwork_end_time) %>
+              <% else %>
+                <%= str_times = working_overwork_next_times(day.designated_work_end_time, day.overwork_end_time) %>
               <% end %>  
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
             <% end %>                       
           </td>
           <td><%= day.process_content %></td>
-          <td><%= day.superior_confirmation %></td>
-          <td colspan="2"></td>          
+          <td colspan="2"><%= day.superior_confirmation %></td>          
         </tr>
       <% end %>
     </tbody>
@@ -119,11 +123,11 @@
         <td colspan="3"><%= @attendances.count %></td>
         <td colspan="8"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
         <td colspan="5"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td><%=link_to " 申請 ", "#", class: "btn btn-sm btn-primary" %></td>
+        <td colspan="2"><%=link_to " 申請 ", "#", class: "btn btn-sm btn-primary" %></td>
       </tr>
     </tfoot>
   </table>
 </div>
 
 <!--モーダルウインドウ表示-->
-<div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!--<div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>-->

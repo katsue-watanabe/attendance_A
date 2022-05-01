@@ -23,22 +23,20 @@
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
               <td><%= attendance.time_field :started_at, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
-              <td><%= f.check_box :next_day, id: "next_day" %></td>
+              <td><%= attendance.check_box :next_day, id: "next_day" %></td>
               <td>
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= str_times = working_times(day.started_at, day.finished_at) %>
-                  <% @total_working_times = @total_working_times.to_f + str_times.to_f %>           
-                <% end %>
+                  <% if day.next_day == false %>
+                    <%= str_times = working_times(day.started_at, day.finished_at) %>
+                    <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
+                  <% else %>
+                    <%= str_times = working_next_times(day.started_at, day.finished_at) %>
+                    <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>
+                  <% end %>                             
+                <% end %>            
               </td>              
-              <td><%= f.text_field :process_content, class: "form-control" %></td>
-              <td>
-                <select class="form-control">
-                  <option></option>
-                  <option>申請中</option>
-                  <option>承認</option>
-                  <option>否認</option>                 
-                </select>
-              </td>
+              <td><%= attendance.text_field :note, class: "form-control" %></td>
+              <td><%= attendance.select :superior_confirmation, [["",""], ["上長A","上長A"], ["上長B","上長B"]], class: "form-control" %></td>              
             </tr>
           <% end %>
         <% end %>

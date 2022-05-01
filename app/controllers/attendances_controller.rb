@@ -1,6 +1,6 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :update_overwork]  
-  before_action :logged_in_user, only: [:update, :edit_one_month, :edit_overwork, :update_overwork]
+  before_action :set_user, only: [:edit_one_month, :update_one_month]  
+  before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :set_one_month, only: :edit_one_month
  
   
@@ -26,14 +26,14 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
 
-  def edit_one_month    
+  def edit_one_month        
   end
 
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        attendance.update_attributes!(item)
+        attendance.update_attributes!(item)    
       end
     end
     
@@ -57,7 +57,7 @@ class AttendancesController < ApplicationController
     else
       flash[:danger] = "{@user.name}残業申請の送信は失敗しました。"
     end
-    redirect_to @user
+    redirect_to user_url(date: params[:date]) 
   end
 
   def list_of_employees
@@ -67,10 +67,10 @@ class AttendancesController < ApplicationController
   private    
     
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :next_day, :note, :superior_confirmation])[:attendances]
     end
 
     def overwork_params
-      params.require(:attendances).permit(:overwork_end_time, :next_day, :process_content, :superior_confirmation)
+      params.require(:user).permit(attendances: [:overwork_end_time, :next_day, :process_content, :superior_confirmation])[:attendances]
     end
 end

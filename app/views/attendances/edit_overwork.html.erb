@@ -1,13 +1,13 @@
 <% provide(:title, 'edit-overwork') %>
 
-<div class="modal-dialog modal-lg modal-dialog-center">
+<!--<div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
        <span aria-hidden="true">&times;</span>
       </button>
       <h1 class="modal-title">【残業申請】</h1>
-    </div>    
+    </div>-->    
     <div class="modal-body">
       <%= form_with(model: @user, url: update_overwork_user_attendance_path(@user, @attendance), local: true) do |f| %>
       <table class="table table-bordered table-condensed table-hover" id="table-attendances">      
@@ -21,15 +21,15 @@
             <th>指示者確認㊞</th>
           </tr>
         </thead>
-        <tbody>        
+        <tbody>                  
           <tr>
             <td><%= l(@attendance.worked_on, format: :short) %></td>
             <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
             <td><%= f.time_field :overwork_end_time, class: "form-control" %></td>
             <td><%= f.check_box :next_day, id: "next_day" %></td>
             <td><%= f.text_field :process_content, class: "form-control" %></td>
-            <td><%= f.select :confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
-          </tr>         
+            <td><%= f.select :superior_confirmation, [["",""], ["上長A","上長A"], ["上長B","上長B"]], class: "form-control" %></td>
+          </tr>                  
       </tbody>            
       </table>
       <div class="center">        

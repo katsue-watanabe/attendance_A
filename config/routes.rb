@@ -19,8 +19,6 @@ Rails.application.routes.draw do
       member do 
         get 'edit_overwork'
         patch 'update_overwork'
-        get 'edit_overtime'
-        patch 'update_overtime'
       end
     end
   end
