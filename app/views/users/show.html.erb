@@ -68,7 +68,7 @@
       <% @attendances.each do |day| %>
         <tr>
           <td>
-            <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), class: "btn btn-primary"%>                        
+            <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), remote: true, class: "btn btn-primary"%>                        
           </td>        
           <td><%= l(day.worked_on, format: :short) %></td>
           <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -112,22 +112,26 @@
       <% end %>
     </tbody>
 
-    <tfoot>
-      <tr>
-        <td colspan="3">累計日数</td>
-        <td colspan="8">総合勤務時間</td>
-        <td colspan="5">累計在社時間</td>
-        <td>所属長承認 未</td>
-      </tr>
-      <tr>
-        <td colspan="3"><%= @attendances.count %></td>
-        <td colspan="8"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
-        <td colspan="5"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td colspan="2"><%=link_to " 申請 ", "#", class: "btn btn-sm btn-primary" %></td>
-      </tr>
+    <tfoot>      
+        <tr>        
+          <td colspan="3">累計日数</td>
+          <td colspan="8">総合勤務時間</td>
+          <td colspan="5">累計在社時間</td>
+          <td colspan="2">所属長承認 未</td>          
+        </tr>
+        <tr>
+          <td colspan="3"><%= @attendances.count %></td>
+          <td colspan="8"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
+          <td colspan="5"><%= format("%.2f", @total_working_times.to_f) %></td>
+          <%= form_with(model: @attendances, url: attendances_update_one_month_user_path(@user, @attendances), local: true, method: :patch) do |f| %><P>
+            <td><%= f.select :superior_confirmation, [["",""], ["上長A","上長A"], ["上長B","上長B"]], class: "form-control" %>                          
+                <br><%= f.submit " 申請 ", class: "btn btn-primary" %>
+            </td>
+          <% end %>
+        </tr>      
     </tfoot>
   </table>
 </div>
 
 <!--モーダルウインドウ表示-->
-<!--<div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>-->
+<div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

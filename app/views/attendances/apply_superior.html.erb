@@ -1,0 +1,58 @@
+<% provide(:title, 'edit-overwork') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+      </button>
+      <h1 class="modal-title">【#{@user}からの残業申請】</h1>
+    </div>    
+    <div class="modal-body">
+      <%= form_with(model: @user, url: user_path(@user, @attendance), local: true) do |f| %>
+      <table class="table table-bordered table-condensed table-hover" id="table-attendances">      
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>曜日</th>          
+            <th>終了予定時間</th>            
+            <th>指定終了予定時間</th>
+            <th>時間外時間</th>
+            <th>業務処理内容</th>
+            <th>指示者確認㊞</th>
+            <th>変更</th>
+            <th>勤怠を確認する</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= f.fields_for "attendances[]", day do |attendance| %>                  
+          <tr>
+            <td><%= l(@attendance.worked_on, format: :short) %></td>
+            <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
+            <td><%= f.time_field :overwork_end_time, class: "form-control" %></td>
+            <td><%= f.time_field :overwork_end_time, class: "form-control" %></td>
+            <td>
+              <% if day.started_at.present? && day.finished_at.present? %>
+                <% if day.next_day == false %>
+                  <%= str_times = working_times(day.started_at, day.finished_at) %>
+                  <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
+                <% else %>
+                  <%= str_times = working_next_times(day.started_at, day.finished_at) %>
+                  <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>
+                <% end %>                             
+              <% end %>            
+            </td>
+            <td><%= f.text_field :process_content, class: "form-control" %></td>
+            <td><%= f.select :superior_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
+            <td><%= f.check_box :next_day, id: "next_day" %></td>
+            <td></td>
+          </tr>                  
+      </tbody>            
+      </table>
+      <div class="center">        
+        <%= f.submit "変更を送信", class: "btn btn-lg btn-primary" %>
+      </div>
+    <% end %>      
+    </div>  
+  </div>
+</div>

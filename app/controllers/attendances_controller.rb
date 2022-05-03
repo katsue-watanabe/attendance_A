@@ -46,18 +46,22 @@ class AttendancesController < ApplicationController
 
   def edit_overwork
     @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])      
+    @attendance = Attendance.find(params[:id])     
   end
 
   def update_overwork
     @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])  
-    if @attendance.update_attributes(overwork_params)
-      flash[:success] = "{@user.name}の残業を申請しました。"
-    else
-      flash[:danger] = "{@user.name}残業申請の送信は失敗しました。"
+    @attendance = Attendance.find(params[:id])
+    overwork_params.each do |id, item|
+        attendance = Attendance.find(id)
+        overwork.update_attributes!(item)             
+      if overwork.update_attribute(overwork_params)
+        flash[:success] = "#{@user.name}の残業を申請しました。"
+      else
+        flash[:danger] = "#{@user.name}残業申請の送信は失敗しました。"
+      end
+    redirect_to user_url(:superior_id)
     end
-    redirect_to user_url(date: params[:date]) 
   end
 
   def list_of_employees
