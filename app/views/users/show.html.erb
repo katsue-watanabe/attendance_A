@@ -25,7 +25,9 @@
 <div class="pull-left">
   <% if current_user.superior? %>
     <%= link_to "【所属長承認申請のお知らせ】", "#" %>
+    <!--勤怠変更申請のお知らせ-->
     <br><%= link_to "【勤怠変更申請のお知らせ】", "#" %>
+    <!--残業申請-->
     <br><%= link_to "【残業申請のお知らせ】", "#" %>
   <%end %>
   <br><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
