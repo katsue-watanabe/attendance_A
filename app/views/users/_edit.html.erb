@@ -29,8 +29,5 @@
   <%= f.label :"指定勤務終了時間", class: "label-user--edit" %>
   <%= f.time_field :designated_work_end_time, class: "form-control" %>
 
-  <%= f.label :"上長権限", class: "label-user--edit" %>
-  <%= f.select :is_released, [['権限なし',0],['権限あり',1]], { include_blank: true, selected: 0 } %>
-
   <%= f.submit "更新", class: "btn btn-primary btn-block btn-user--edit" %>
 <% end %>

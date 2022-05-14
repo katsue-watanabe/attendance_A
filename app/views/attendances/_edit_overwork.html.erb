@@ -9,33 +9,37 @@
       <h1 class="modal-title">【残業申請】</h1>
     </div>    
     <div class="modal-body">
-      <%= form_with(model: @attendance, url: update_overwork_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>                                        
-      <table class="table table-bordered table-condensed table-hover" id="table-attendances">      
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>曜日</th>          
-            <th>終了予定時間</th>            
-            <th>翌日</th>
-            <th>業務処理内容</th>
-            <th>指示者確認㊞</th>
-          </tr>
-        </thead>
-        <tbody>                  
-          <tr>
-            <td><%= l(@attendance.worked_on, format: :short) %></td>
-            <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
-            <td><%= f.time_field :overwork_end_time, class: "form-control" %></td>
-            <td><%= f.check_box :next_day, id: "next_day" %></td>
-            <td><%= f.text_field :process_content, class: "form-control" %></td>
-            <td><%= f.select :superior_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
-          </tr>                  
-      </tbody>            
-      </table>
-      <div class="center">        
-        <%= f.submit "変更を送信", class: "btn btn-lg btn-primary" %>
-      </div>
-    <% end %>      
+      <%= form_with(model: @attendance, url: update_overwork_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
+      <%= f.hidden_field :superior_confirmation, value: "残業申請中" %>                                                   
+        <table class="table table-bordered table-condensed table-hover" id="table-attendances">      
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>曜日</th>          
+              <th>終了予定時間</th>            
+              <th>翌日</th>
+              <th>業務処理内容</th>
+              <th>指示者確認㊞</th>
+            </tr>
+          </thead>
+          <tbody>                  
+            <tr>
+              <td><%= l(@attendance.worked_on, format: :short) %></td>
+              <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
+              <td><%= f.time_field :overwork_end_time, class: "form-control" %></td>
+              <td><%= f.check_box :next_day, id: "next_day" %></td>
+              <td><%= f.text_field :process_content, class: "form-control" %></td>            
+              <td>
+                <%= f.collection_select :superior_confirmation, @superior, :name, :name,{prompt: ""}, {class: "form-control"} %>
+                <%= f.hidden_field :superior_confirmation, value: "残業申請中" %>
+              </td>
+            </tr>                  
+          </tbody>            
+        </table>
+        <div class="center">        
+          <%= f.submit "変更を送信", class: "btn btn-lg btn-primary" %>
+        </div>
+      <% end %>      
     </div>  
   </div>
 </div>

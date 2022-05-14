@@ -16,9 +16,13 @@ Rails.application.routes.draw do
       get 'list_of_employees'     
     end
     resources :attendances, only: [:update] do
-      member do 
+      member do
+        # 残業申請 
         get 'edit_overwork'
         patch 'update_overwork'
+        # 残業申請お知らせモーダル
+        get 'edit_overwork_notice'
+        patch 'update_overwork_notice'
       end
     end
   end

@@ -16,14 +16,14 @@ module AttendancesHelper
   end
 
   def working_next_times(start, finish)
-    format("%.2f", (((finish - start) / 60) / 60.0) + 24)
+    format("%.2f", (((24 - start + finish) / 60) / 60.0))
   end
 
-  def working_overwork_times(designated_work_end_time, overwork_end_time)
-    format("%.2f", (((overwork_end_time - designated_work_end_time) / 60) / 60.0))
+  def working_overwork_times(designated_work_end_time, finish)
+    format("%.2f", (((finish - designated_work_end_time) / 60) / 60.0) - 24)
   end
 
-  def working_overwork_next_times(designated_work_end_time, overwork_end_time)
-    format("%.2f", (((overwork_end_time - designated_work_end_time) / 60) / 60.0) + 24)
+  def working_overwork_next_times(designated_work_end_time, finish)
+    format("%.2f", (((24 - designated_work_end_time + finish) / 60) / 60.0) - 24)
   end
 end 

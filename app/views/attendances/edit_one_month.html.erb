@@ -19,8 +19,14 @@
         <% @attendances.each do |day| %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
             <tr>
-              <td><%= l(day.worked_on, format: :short) %></td>
-              <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+              <td class="<% if day.worked_on.saturday? %>sat<% end %>
+                     <% if day.worked_on.sunday? %>sun<% end %>">
+                     <%= l(day.worked_on, format: :short) %>
+              </td>
+              <td class="<% if day.worked_on.saturday? %>sat<% end %>
+                     <% if day.worked_on.sunday? %>sun<% end %>">
+                     <%= $days_of_the_week[day.worked_on.wday] %>
+              </td>
               <td><%= attendance.time_field :started_at, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
               <td><%= attendance.check_box :next_day, id: "next_day" %></td>
@@ -36,7 +42,7 @@
                 <% end %>            
               </td>              
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.select :superior_confirmation, [["",""], ["上長A","上長A"], ["上長B","上長B"]], class: "form-control" %></td>              
+              <td><%= f.collection_select :superior_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %></td>              
             </tr>
           <% end %>
         <% end %>

@@ -11,7 +11,7 @@
     <tbody>
       <% @users.each do |user| %>
         <% user.attendances.each do |attendance| %>
-          <% if (Date.current == attendance.worked_on) && attendance.started_at != nil && attendance.finished_at == nil %>
+          <% if (Date.current == attendance.worked_on) && attendance.started_at.present? && attendance.finished_at == nil %>
           <tr>
             <td><%= user.employee_number %></td>
             <td><%= user.name %></td>

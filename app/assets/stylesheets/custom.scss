@@ -68,6 +68,47 @@ p {
   text-decoration: none;
 }
 
+/* 勤怠表 */
+#table-attendances {
+  margin-top: 20px;
+  th {
+    font-weight: normal;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+.btn-notice {
+  color: black;
+  .hover {
+    text-decoration: none;
+  }
+}
+
+.application-notice {
+  color: red;
+}
+
+.btn-user-attendance {
+  margin-top: 15px;
+}
+
+.btn-users-month {
+  margin: 20px;
+}
+
+#table-users {
+  margin-top: 10px;
+  td {
+    border: none;
+  }
+}
+
 /* debug */
 
 .debug_dump {
@@ -101,4 +142,33 @@ p {
 
 .modal-dialog-center {
   padding-top: 10%;
+}
+
+/* 土曜日(日曜日)の文字色*/
+.sat {
+  color: #0000ff;
+}
+
+.sun {
+  color: #ff0000;
+}
+
+
+/* 残業申請お知らせの文字色*/
+.notice-superior {  
+  color: #ff0000;
+  font-weight: bold;
+}
+
+.notice-border-superior {
+  border: solid 2px #ff0000;
+  color: #ff0000;
+  font-weight: bold;
+}
+
+.notice-superior:hover {
+  border: solid 2px #f96250;
+  color: #f96250;
+  font-weight: bold;
+  text-decoration: none;
 }

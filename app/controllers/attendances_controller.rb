@@ -1,6 +1,7 @@
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
+  before_action :set_superior, only: [:edit_one_month, :edit_overwork, :update_overwork]
   before_action :set_one_month, only: :edit_one_month
  
   
@@ -57,6 +58,14 @@ class AttendancesController < ApplicationController
     else
       flash[:danger] = "#{@user.name}残業申請の送信は失敗しました。"
     end
+    redirect_to user_url(@user)    
+  end
+
+  #残業申請のお知らせモーダル
+  def edit_notice_overwork
+    @user = User.find(params[:user_id])
+    @users = User.joins(:attendances).group("users_id").where(attendances: {overtime_status: "残業申請中"})
+    #@attendances = Attendance.where.not(overwork_end_time: nil).order("worked_on ASC")
   end
 
   def list_of_employees
@@ -71,5 +80,9 @@ class AttendancesController < ApplicationController
 
     def overwork_params
       params.require(:attendance).permit(:overwork_end_time, :next_day, :process_content, :superior_confirmation)
+    end
+
+    def set_superior
+      @superior = User.where(superior:true).where.not(id:current_user.id)
     end
 end
