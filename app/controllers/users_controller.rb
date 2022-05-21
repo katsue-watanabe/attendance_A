@@ -10,17 +10,28 @@ class UsersController < ApplicationController
   end
 
   def import
-    if params[:csv_file] .blank?
+    if User.import(params[:file])
+      flash[:success] = "csvファイルをインポートしました。"
+    else
+      params[:csv_file] .blank?
       flash[:danger]= "csvファイルを選択してください"
-    else User.import(params[:file]) 
-      flash[:success] = "csvファイルをインポートしました。"    
     end
     redirect_to users_url
   end
 
+  #def import
+    #if params[:csv_file] .blank?
+      #flash[:danger]= "csvファイルを選択してください"
+    #else 
+      #User.import(params[:file]) 
+      #flash[:success] = "csvファイルをインポートしました。"    
+    #end
+    #redirect_to users_url
+  #end
+  
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count    
-    @overwork_sum = Attendance.where(superior_confirmation: "残業申請中", superior_confirmation: @user.name).count      
+    @overwork_sum = Attendance.includes(:user).where(superior_confirmation: @user.name, superior_confirmation: "残業申請中").count 
     @superior = User.where(superior: true).where.not(id: current_user.id) 
   end
 

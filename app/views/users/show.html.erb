@@ -7,8 +7,8 @@
         <%= l(@first_day, format: :middle) %>時間管理表
         <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-primary" %>
       </td>
-      <td>指定勤務開始時間:<%= format_basic_info(@user.designated_work_start_time) %>
-        <br>指定勤務終了時間:<%= format_basic_info(@user.designated_work_end_time) %></td>
+      <td>指定勤務開始時間:<%= l(@user.designated_work_start_time, format: :time) %>
+        <br>指定勤務終了時間:<%= l(@user.designated_work_end_time, format: :time) %></td>
       <td colspan="3" class="table-active">基本時間<%= format_basic_info(@user.basic_time) %></td>
       <td>初日:<%= l(@first_day, format: :short) %></td>
     </tr>  
@@ -22,26 +22,38 @@
     </tr>
   </table>
 </div>
-<div class="notice">
+<div class="notice">  
   <% if current_user.superior? && current_user?(@user) %>
       <!--所属長承認申請のお知らせ-->
     <div>
-      <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
-      <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+      <% if @overwork_sum > 0 %>
+        <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
+        <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+      <% else %>
+        <%= "【所属長承認申請のお知らせ】" %>
+      <% end %>
     </div>
       <!--勤怠変更申請のお知らせ-->
-    <div>      
-      <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
-      <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+    <div>
+      <% if @overwork_sum > 0 %>      
+        <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
+        <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+      <% else %>
+        <%= "【勤怠変更申請のお知らせ】" %>
+      <% end %>
     </div>
       <!--残業申請-->
-    <div> 
-      <%= link_to "【残業申請のお知らせ】", edit_overwork_notice_user_attendance_path(@user), remote: true, class: "notice-superior" %>
-      <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+    <div>
+      <% if @overwork_sum > 0 %> 
+        <%= link_to "【残業申請のお知らせ】", edit_overwork_notice_user_attendance_path(@user), class: "notice-superior" %>
+        <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+      <% else %>
+        <%= "【残業申請のお知らせ】" %>
+      <% end %>
     </div>   
   <% end %>
-  <br><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
-  
+</div>
+<div><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>  
   <%= link_to "csv出力", "#", class: "btn btn-primary" %>
   <br><%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary"%>
 </div>
@@ -102,27 +114,17 @@
           <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
           <td></td>
           <td>
-            <% if day.started_at.present? && day.finished_at.present? %>
-              <% if day.next_day == false %>
-                <%= str_times = working_times(day.started_at, day.finished_at) %>
-                <% @total_working_times = @total_working_times.to_f + str_times.to_f %>                                
-              <% else %>
-                <%= str_times = working_next_times(day.started_at, day.finished_at) %>
-                <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>                                
-              <% end %>                            
+            <% if day.started_at.present? && day.finished_at.present? %>              
+              <%= str_times = working_times(day.started_at, day.finished_at, day.next_day) %>
+              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>            
             <% end %>
           </td>
           <td><%= day.note %></td>
           <td><%= l(day.overwork_end_time, format: :hour) if day.overwork_end_time? %></td>
           <td><%= l(day.overwork_end_time, format: :min) if day.overwork_end_time? %></td>         
           <td>            
-            <% if day.finished_at.present? %>                        
-              <% if day.next_day == false %>              
-                <%= str_times = working_overwork_times(@user.designated_work_end_time, day.finished_at) %>
-              <% else %>
-                <%= str_times = working_overwork_next_times(@user.designated_work_end_time, day.finished_at) %>
-              <% end %>  
-              <% @total_overwork_times = str_times.to_f %>                         
+            <% if day.overwork_end_time.present? %>                             
+              <%= working_overwork_times(@user.designated_work_end_time, day.overwork_end_time, day.overwork_next_day) %>                                                    
             <% end %>
           </td>
           <td><%= day.process_content %></td>
@@ -156,4 +158,4 @@
 
 <!--モーダルウインドウ表示-->
 <div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!--<div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>-->

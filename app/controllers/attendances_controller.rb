@@ -58,7 +58,7 @@ class AttendancesController < ApplicationController
     else
       flash[:danger] = "#{@user.name}残業申請の送信は失敗しました。"
     end
-    redirect_to user_url(@user)    
+    redirect_to user_url(@user)        
   end
 
   #残業申請のお知らせモーダル
@@ -79,7 +79,7 @@ class AttendancesController < ApplicationController
     end
 
     def overwork_params
-      params.require(:attendance).permit(:overwork_end_time, :next_day, :process_content, :superior_confirmation)
+      params.require(:attendance).permit(:overwork_end_time, :overwork_next_day, :process_content, :superior_confirmation)
     end
 
     def set_superior
