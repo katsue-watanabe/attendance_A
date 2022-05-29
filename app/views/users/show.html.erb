@@ -25,28 +25,28 @@
 <div class="notice">  
   <% if current_user.superior? && current_user?(@user) %>
       <!--所属長承認申請のお知らせ-->
-    <div>
+    <!--<div>
       <% if @overwork_sum > 0 %>
         <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
         <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
       <% else %>
         <%= "【所属長承認申請のお知らせ】" %>
       <% end %>
-    </div>
+    </div>-->
       <!--勤怠変更申請のお知らせ-->
-    <div>
+    <!--<div>
       <% if @overwork_sum > 0 %>      
         <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true, class: "notice-superior" %>
         <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
       <% else %>
         <%= "【勤怠変更申請のお知らせ】" %>
       <% end %>
-    </div>
+    </div>-->
       <!--残業申請-->
     <div>
-      <% if @overwork_sum > 0 %> 
-        <%= link_to "【残業申請のお知らせ】", edit_overwork_notice_user_attendance_path(@user), class: "notice-superior" %>
-        <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>
+      <% if @overwork_sum > 0 %>
+        <%= link_to "【残業申請のお知らせ】", edit_overwork_notice_user_attendance_path(@user), remote: true, class: "notice-superior" %>
+        <span class="notice-border-superior"><%= "#{@overwork_sum}件の通知があります" %></span>        
       <% else %>
         <%= "【残業申請のお知らせ】" %>
       <% end %>
@@ -129,7 +129,7 @@
           </td>
           <td><%= day.process_content %></td>
           <td colspan="2">
-            <%= day.superior_confirmation %>            
+            <%= day.overwork_status %>            
           </td>          
         </tr>
       <% end %>
@@ -158,4 +158,4 @@
 
 <!--モーダルウインドウ表示-->
 <div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<!--<div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>-->
+<div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

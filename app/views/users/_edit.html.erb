@@ -1,6 +1,6 @@
 <% provide(:title, 'Edit') %>
 
-<%= form_with(model: @user, local: true) do |f| %>
+<%= form_with(model: user, local: true) do |f| %>
   
   <%= f.label :"名前", class: "label-user--edit" %>
   <%= f.text_field :name, class: "form-control" %>

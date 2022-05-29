@@ -9,9 +9,9 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.boolean :overwork_next_day
       t.string :note
       t.string :superior_confirmation
-      t.string :select_superior_for_overwork
-      t.string :confirm_superior_for_overtime
+      t.string :overwork_status
       t.string :process_content
+      t.boolean :is_check
       t.references :user, foreign_key: true
 
       t.timestamps

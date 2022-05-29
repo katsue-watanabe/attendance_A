@@ -25,5 +25,19 @@ module AttendancesHelper
     else
       format("%.2f", (overwork_end_time.hour - designated_work_end_time.hour) + ((overwork_end_time.min - designated_work_end_time.min) / 60.0))
     end
-  end  
+  end
+  
+  #残業申請のステータス
+  def overwork_status_text(status)
+    case status
+    when "申請中"
+      "残業申請中"
+    when "否認"
+      "残業否認"
+    when "承認"
+      "残業承認"
+    when "なし"
+    else
+    end
+  end
 end 
