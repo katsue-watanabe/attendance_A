@@ -31,8 +31,11 @@ class UsersController < ApplicationController
   
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count    
-    @overwork_sum = Attendance.includes(:user).where(superior_confirmation: @user.name, superior_confirmation: "残業申請中").count 
-    @superior = User.where(superior: true).where.not(id: current_user.id) 
+    @superior = User.where(superior: true).where.not(id: @user.id)
+    # 残業申請のお知らせ（上長ごとに、残業申請がされている件数をカウント）
+    if current_user.superior?      
+      @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "申請中").count 
+    end   
   end
 
   def new
@@ -78,7 +81,7 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:name, :email, :department, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_endt_time)
+      params.require(:user).permit(:name, :email, :department, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
 
     def basic_info_params

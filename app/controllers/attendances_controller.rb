@@ -1,15 +1,16 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month]  
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
-  before_action :set_superior, only: [:edit_one_month, :edit_overwork, :update_overwork]
+  before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice]
   before_action :set_one_month, only: :edit_one_month
+  before_action :set_superior, only: [:edit_one_month, :edit_overwork, :update_overwork]
  
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
   def update
     @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])
+   
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
       if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
@@ -46,13 +47,12 @@ class AttendancesController < ApplicationController
   end
 
   def edit_overwork
-    @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])     
+    @user = User.find(params[:user_id])  
   end
 
   def update_overwork
-    @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])                       
+    @user = User.find(params[:user_id])    
+    @superior = User.where(superior: true).where.not(id: current_user.id)                       
     if @attendance.update(overwork_params)
       flash[:success] = "#{@user.name}の残業を申請しました。"
     else
@@ -61,25 +61,29 @@ class AttendancesController < ApplicationController
     redirect_to user_url(@user)        
   end
 
-  #残業申請のお知らせモーダル
-  def edit_notice_overwork
-    @user = User.find(params[:user_id])
-    @users = User.joins(:attendances).group("users_id").where(attendances: {overtime_status: "残業申請中"})
-    #@attendances = Attendance.where.not(overwork_end_time: nil).order("worked_on ASC")
+  #残業申請の承認
+  def edit_overwork_notice
+    @user = User.find(params[:id])                 
+    @attendances = Attendance.where(superior_confirmation: @user.id, overwork_status: "申請中").order(:user_id, :worked_on).group_by(&:user_id)
+    # @attendances = Attendance.overwork_notice_info(@user)
   end
 
   def list_of_employees
     @users = User.all.includes(:attendances)
   end
 
-  private    
+  private
+  
+    def set_attendance
+      @attendance = Attendance.find(params[:id])      
+    end
     
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :next_day, :note, :superior_confirmation])[:attendances]
     end
 
     def overwork_params
-      params.require(:attendance).permit(:overwork_end_time, :overwork_next_day, :process_content, :superior_confirmation)
+      params.require(:attendance).permit(:overwork_end_time, :overwork_next_day, :process_content, :superior_confirmation, :overwork_status)
     end
 
     def set_superior
