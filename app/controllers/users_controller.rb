@@ -34,7 +34,9 @@ class UsersController < ApplicationController
     @superior = User.where(superior: true).where.not(id: @user.id)
     # 残業申請のお知らせ（上長ごとに、残業申請がされている件数をカウント）
     if current_user.superior?      
-      @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "申請中").count 
+      @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "申請中").count
+      @attendance_change_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, attendance_change_status: "申請中").count
+      @one_month_approval_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, one_month_approval_status: "申請中").count 
     end   
   end
 

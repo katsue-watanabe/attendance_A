@@ -23,6 +23,10 @@ Rails.application.routes.draw do
         # 残業申請お知らせモーダル
         get 'edit_overwork_notice'
         patch 'update_overwork_notice'
+        get 'edit_attendance_change'
+        patch 'update_attendance_change'
+        get 'edit_one_month_approval'
+        patch 'update_one_month_approval'
       end
     end
   end

@@ -68,6 +68,28 @@ class AttendancesController < ApplicationController
     # @attendances = Attendance.overwork_notice_info(@user)
   end
 
+  def update_overwork_notice
+    overwork_notice_params.each do |id, item|
+      attendance = Attendance.find(id)
+      if overwork_notice_params[id][:is_check]
+        if overwork_notice_params[id][:superior_notice_confirmation] == "承認"
+          attendance.overwork_status = "残業承認済"
+          attendance.superior_confirmation = nil
+        elsif overwork_notice_params[id][:superior_notice_confirmation] == "否認"
+          attendance.overwork_status = "残業否認済"
+          attendance.superior_confirmation = nil 
+        else overwork_notice_params[id][:superior_notice_confirmation] == "なし"
+          attendance.overwork_status = "残業なし"
+          attendance.superior_confirmation = nil
+        end
+      else
+        flash[:danger] = "承認確認のチェックを入れてください。"        
+      end
+      attendance.update(item)
+        flash[:success] = "残業申請の承認結果を送信しました。"       
+    end
+  end
+
   def list_of_employees
     @users = User.all.includes(:attendances)
   end
@@ -76,6 +98,10 @@ class AttendancesController < ApplicationController
   
     def set_attendance
       @attendance = Attendance.find(params[:id])      
+    end
+
+    def set_superior
+      @superior = User.where(superior:true).where.not(id:current_user.id)
     end
     
     def attendances_params
@@ -86,7 +112,9 @@ class AttendancesController < ApplicationController
       params.require(:attendance).permit(:overwork_end_time, :overwork_next_day, :process_content, :superior_confirmation, :overwork_status)
     end
 
-    def set_superior
-      @superior = User.where(superior:true).where.not(id:current_user.id)
+    def overwork_notice_params
+      params.require(:user).permit(attendances: [:overwork_end_time, :designated_work_end_time, :is_check, :process_content, :superior_notice_confirmation])[:attendances]
     end
+
+    
 end
