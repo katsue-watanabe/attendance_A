@@ -1,6 +1,5 @@
 <% provide(:title, @user.name) %>
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
-<%= f.hidden_field :attendance_change_status, value: "申請中" %>
   <div>
     <h1>勤怠編集画面</h1>
     <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -19,6 +18,7 @@
       <tbody>
         <% @attendances.each do |day| %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
+          <%= attendance.hidden_field :attendance_change_status, value: "申請中" %>
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -37,7 +37,7 @@
                 <% end %>            
               </td>              
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= f.collection_select :superior_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %></td>              
+              <td><%= attendance.collection_select :superior_attendance_change_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %></td>              
             </tr>
           <% end %>
         <% end %>
