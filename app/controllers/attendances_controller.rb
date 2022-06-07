@@ -32,11 +32,13 @@ class AttendancesController < ApplicationController
   end
 
   def update_one_month
+    @superior = User.where(superior: true).where.not(id: current_user.id) 
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         attendance.update_attributes!(item)    
       end
+      
     end
     
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
@@ -105,7 +107,7 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :next_day, :note, :superior_confirmation])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :next_day, :note, :superior_attendance_change_confirmation, :attendance_change_status])[:attendances]
     end
 
     def overwork_params
@@ -115,6 +117,5 @@ class AttendancesController < ApplicationController
     def overwork_notice_params
       params.require(:user).permit(attendances: [:overwork_end_time, :designated_work_end_time, :is_check, :process_content, :superior_notice_confirmation])[:attendances]
     end
-
-    
+        
 end
