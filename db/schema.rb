@@ -16,6 +16,8 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.date "worked_on"
     t.datetime "started_at"
     t.datetime "finished_at"
+    t.datetime "change_before_started_at"
+    t.datetime "change_before_finished_at"
     t.time "overwork_end_time"
     t.boolean "next_day"
     t.boolean "overwork_next_day"
@@ -26,7 +28,13 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.string "process_content"
     t.string "superior_confirmation"
     t.string "superior_notice_confirmation"
+    t.string "superior_attendance_change_confirmation"
+    t.string "superior_attendance_change_approval_confirmation"
+    t.string "superior_month_notice_confirmation"
+    t.string "superior_month_approval_confirmation"
     t.boolean "is_check"
+    t.boolean "change_check"
+    t.boolean "approval_check"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -52,8 +60,8 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2022-05-31 23:00:00"
-    t.datetime "work_time", default: "2022-05-31 22:30:00"
+    t.datetime "basic_time", default: "2022-06-08 23:00:00"
+    t.datetime "work_time", default: "2022-06-08 22:30:00"
     t.time "designated_work_start_time", default: "2000-01-01 23:00:00"
     t.time "designated_work_end_time", default: "2000-01-01 08:00:00"
     t.boolean "superior", default: false
