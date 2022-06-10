@@ -3,7 +3,9 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
     create_table :attendances do |t|
       t.date :worked_on
       t.datetime :started_at
-      t.datetime :finished_at      
+      t.datetime :finished_at
+      t.datetime :change_before_started_at
+      t.datetime :change_before_finished_at      
       t.time :overwork_end_time
       t.boolean :next_day
       t.boolean :overwork_next_day
@@ -15,6 +17,8 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.string :superior_confirmation
       t.string :superior_notice_confirmation
       t.string :superior_attendance_change_confirmation
+      t.string :superior_attendance_change_approval_confirmation
+      t.string :superior_month_notice_confirmation
       t.string :superior_month_approval_confirmation
       t.boolean :is_check
       t.boolean :change_check
