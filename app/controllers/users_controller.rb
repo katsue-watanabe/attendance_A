@@ -32,10 +32,10 @@ class UsersController < ApplicationController
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count    
     @superior = User.where(superior: true).where.not(id: @user.id)
-    if current_user.superior?      
+       if current_user.superior?      
       @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "申請中").count
       @attendance_change_sum = Attendance.includes(:user).where(superior_attendance_change_confirmation: current_user.id, attendance_change_status: "申請中").count
-      @one_month_approval_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, one_month_approval_status: "申請中").count 
+      @one_month_approval_sum = Attendance.includes(:user).where(superior_month_approval_confirmation: current_user.id, one_month_approval_status: "申請中").count 
     end   
   end
 

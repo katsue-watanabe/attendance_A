@@ -11,11 +11,11 @@ module AttendancesHelper
   end
 
   # 出勤時間と退勤時間を受け取り、在社時間を計算して返します。
-  def working_times(start, finish, next_day)
+  def working_times(restart, refinish, next_day)
     if next_day
-      format("%.2f", (((finish - start) / 60) / 60.0) + 24)
+      format("%.2f", (((refinish - restart) / 60) / 60.0) + 24)
     else
-      format("%.2f", ((finish - start) / 60) / 60.0)
+      format("%.2f", ((refinish - restart) / 60) / 60.0)
     end
   end
   
@@ -52,6 +52,20 @@ module AttendancesHelper
       "残業承認済"
     when "なし"
       "残業なし"
+    else
+    end
+  end
+
+  #1ヶ月分の申請のステータス
+  def one_month_approval_status_text(status)
+    case status
+    when "申請中"
+      "1ヶ月の勤怠申請中"
+    when "否認"
+      "1ヶ月の勤怠否認"
+    when "承認"
+      "勤怠変更承認"
+    when "なし"
     else
     end
   end

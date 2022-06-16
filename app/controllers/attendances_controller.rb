@@ -1,9 +1,9 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice]  
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :update_month_request]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
-  before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice]
+  before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice, :update_month_request]
   before_action :set_one_month, only: :edit_one_month
-  before_action :set_superior, only: [:edit_one_month, :edit_overwork, :update_overwork]
+  before_action :set_superior, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork, :update_month_request]
  
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
@@ -13,13 +13,13 @@ class AttendancesController < ApplicationController
    
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
-      if @attendance.update_attributes(started_at: Time.current.change(sec: 0), change_before_started_at: Time.current.change(sec: 0))
+      if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
         flash[:info] = "おはようございます！"
       else
         flash[:danger] = UPDATE_ERROR_MSG
       end
     elsif @attendance.finished_at.nil?
-      if @attendance.update_attributes(finished_at: Time.current.change(sec: 0), change_before_finished_at: Time.current.change(sec: 0))
+      if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした。"
       else
         flash[:danger] = UPDATE_ERROR_MSG
@@ -32,7 +32,6 @@ class AttendancesController < ApplicationController
   end
 
   def update_one_month
-    @superior = User.where(superior: true).where.not(id: current_user.id) 
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
@@ -52,14 +51,35 @@ class AttendancesController < ApplicationController
     @attendances = Attendance.where(superior_attendance_change_confirmation: @user.id, attendance_change_status: "申請中").order(:user_id, :worked_on).group_by(&:user_id)
   end
 
+  def update_attendance_change
+    attendance_change_params.each do |id, item|
+      attendance = Attendance.find(id)
+      if attendance_change_params[id][:change_check]
+        if attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "承認"
+          attendance.attendance_change_check_status = "勤怠変更承認済"
+          attendance.superior_attendance_change_confirmation = nil
+        elsif overwork_notice_params[id][:superior_attendance_change_approval_confirmation] == "否認"
+          attendance.attendance_change_check_status = "勤怠変更否認済"
+          attendance.superior_attendance_change_confirmation = nil 
+        else overwork_notice_params[id][:superior_attendance_change_approval_confirmation] == "なし"
+          attendance.attendance_change_check_status = "勤怠変更なし"
+          attendance.superior_attendance_change_confirmation = nil
+        end
+      else
+        flash[:danger] = "承認確認のチェックを入れてください。"        
+      end
+      attendance.update(item)
+        flash[:success] = "勤怠変更申請の承認結果を送信しました。"       
+    end
+  end
+
    #残業申請
   def edit_overwork
     @user = User.find(params[:user_id])  
   end
 
   def update_overwork
-    @user = User.find(params[:user_id])    
-    @superior = User.where(superior: true).where.not(id: current_user.id)                       
+    @user = User.find(params[:user_id])                         
     if @attendance.update(overwork_params)
       flash[:success] = "#{@user.name}の残業を申請しました。"
     else
@@ -97,6 +117,18 @@ class AttendancesController < ApplicationController
     end
   end
 
+  #1ヶ月分の勤怠申請
+  #def update_month_request
+    #@attendance = @user.attendances.find_by(worked_on: params[:user][:worked_on])    
+    #if params[:user][:superior_month_notice_confirmation].blank?
+      #flash[:danger]= "所属長を選択してください。"
+    #else    
+      #@attendance.update(month_request_params)
+      #flash[:success] = "#{@user.name}の1か月分の申請をしました。"
+    #end
+    #redirect_to user_url(@user)        
+  #end
+
   def list_of_employees
     @users = User.all.includes(:attendances)
   end
@@ -112,7 +144,11 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :next_day, :note, :superior_attendance_change_confirmation, :attendance_change_status])[:attendances]
+      params.require(:user).permit(attendances: [:restarted_at, :refinished_at, :next_day, :note, :superior_attendance_change_confirmation, :attendance_change_status])[:attendances]
+    end
+
+    def attendance_change_params
+      params.require(:user).permit(attendances: [:restarted_at, :refinished_at, :note, :change_check, :superior_attendance_change_approval_confirmation,  :attendance_change_check_status])[:attendances]
     end
 
     def overwork_params
@@ -121,6 +157,10 @@ class AttendancesController < ApplicationController
 
     def overwork_notice_params
       params.require(:user).permit(attendances: [:overwork_end_time, :designated_work_end_time, :is_check, :process_content, :superior_notice_confirmation])[:attendances]
+    end
+    
+    def month_request_params
+      params.require(:user).permit(attendances: [:superior_month_notice_confirmation, :one_month_approval_status])[:attendances]
     end
         
 end

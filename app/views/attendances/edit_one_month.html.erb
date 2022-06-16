@@ -22,16 +22,16 @@
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
-              <td><%= attendance.time_field :started_at, class: "form-control" %></td>
-              <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
+              <td><%= attendance.time_field :restarted_at, class: "form-control" %></td>
+              <td><%= attendance.time_field :refinished_at, class: "form-control" %></td>
               <td><%= attendance.check_box :next_day, id: "next_day" %></td>
               <td>
-                <% if day.started_at.present? && day.finished_at.present? %>
+                <% if day.restarted_at.present? && day.refinished_at.present? %>
                   <% if day.next_day == false %>
-                    <%= str_times = working_times(day.started_at, day.finished_at, day.next_day) %>
+                    <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
                     <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
                   <% else %>
-                    <%= str_times = working_next_times(day.started_at, day.finished_at) %>
+                    <%= str_times = working_next_times(day.restarted_at, day.refinished_at) %>
                     <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>
                   <% end %>                             
                 <% end %>            

@@ -42,22 +42,23 @@
             </thead>
             <tbody>
               <% attendances.each do |day| %>              
-                <%= f.fields_for "attendances[]", day do |attendance| %>                  
+                <%= f.fields_for "attendances[]", day do |attendance| %>
+                <%= attendance.hidden_field :attendance_change_status, value: "申請中" %>                  
                   <tr>
                     <td><%= l(day.worked_on, format: :short) %></td>
                     <td><%= $days_of_the_week[day.worked_on.wday] %></td>
                     <!--変更前・出勤-->                    
-                    <td><%= day.change_before_started_at.strftime("%H") unless day.change_before_started_at.nil? %></td>
-                    <td><%= day.change_before_started_at.strftime("%M") unless day.change_before_started_at.nil? %></td>
-                    <!--変更前・退勤-->
-                    <td><%= day.change_before_finished_at.strftime("%H") unless day.change_befor_finished_at.nil? %></td>
-                    <td><%= day.change_begore_finished_at.strftime("%M") unless day.change_before_finished_at.nil? %></td>
-                    <!--変更後・出勤-->
                     <td><%= day.started_at.strftime("%H") if day.started_at.present? %></td>
                     <td><%= day.started_at.strftime("%M") if day.started_at.present? %></td>
-                    <!--変更後・退勤-->
+                    <!--変更前・退勤-->
                     <td><%= day.finished_at.strftime("%H") if day.finished_at.present? %></td>
                     <td><%= day.finished_at.strftime("%M") if day.finished_at.present? %></td>
+                    <!--変更後・出勤-->
+                    <td><%= day.restarted_at&.strftime("%H") if day.restarted_at&.present? %></td>
+                    <td><%= day.restarted_at&.strftime("%M") if day.restarted_at&.present? %></td>
+                    <!--変更後・退勤-->
+                    <td><%= day.refinished_at&.strftime("%H") if day.refinished_at&.present? %></td>
+                    <td><%= day.refinished_at&.strftime("%M") if day.refinished_at&.present? %></td>
                     <td><%= day.process_content %></td>
                     <td><%= attendance.select :superior_attendance_change_approval_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
                     <td><%= attendance.check_box :change_check, {}, true, false %></td>

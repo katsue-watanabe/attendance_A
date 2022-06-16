@@ -103,19 +103,47 @@
                      <% if day.worked_on.sunday? %>sun<% end %>">
                      <%= $days_of_the_week[day.worked_on.wday] %>
           </td>
-          <td><%= day.started_at.strftime("%H") if day.started_at.present? %></td>
-          <td><%= day.started_at.strftime("%M") if day.started_at.present? %></td>          
           <td>
-            <% if btn_text = attendance_state(day) %>
-              <%= link_to "#{btn_text}登録", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% if day.started_at.present? && day.restarted_at.nil? %>
+              <%= day.started_at.strftime("%H") %>
+            <% else %>
+              <%= day.restarted_at&.strftime("%H") %>
+            <% end %>
+          </td>
+          <td>
+            <% if day.started_at.present? && day.restarted_at.nil? %>
+              <%= day.started_at.strftime("%M") %>
+            <% else %>
+              <%= day.restarted_at&.strftime("%M") %>
             <% end %>
           </td>          
-          <td><%= day.finished_at.strftime("%H") if day.finished_at.present? %></td>
-          <td><%= day.finished_at.strftime("%M") if day.finished_at.present? %></td>
-          <td></td>
           <td>
-            <% if day.started_at.present? && day.finished_at.present? %>              
-              <%= str_times = working_times(day.started_at, day.finished_at, day.next_day) %>
+            <% if (Date.current == day.worked_on) && day.started_at.nil? %>
+              <%= link_to "出勤", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% end %>
+          </td>          
+          <td>
+            <% if day.finished_at.present? && day.restarted_at.nil? %>
+              <%= day.finished_at.strftime("%H") %>
+            <% else %>
+              <%= day.refinished_at&.strftime("%H") %>
+            <% end %>
+          </td>
+          <td>
+            <% if day.finished_at.present? && day.refinished_at.nil? %>
+              <%= day.finished_at.strftime("%M") %>
+            <% else %>
+              <%= day.refinished_at&.strftime("%M") %>
+            <% end %>
+          </td>
+          <td>
+            <% if (Date.current == day.worked_on) && day.started_at.present? && day.finished_at.nil? %>
+              <%= link_to "退勤登録", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% end %>
+          </td>
+          <td>
+            <% if day.restarted_at.present? && day.refinished_at.present? %>              
+              <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>            
             <% end %>
           </td>
@@ -129,7 +157,8 @@
           </td>
           <td><%= day.process_content %></td>
           <td colspan="2">
-            <%= day.overwork_status %>            
+            <%= day.overwork_status if day.overwork_status.present? %>
+            <br><%= day.attendance_change_check_status if day.attendance_change_check_status.present? %>                     
           </td>          
         </tr>
       <% end %>
@@ -146,11 +175,13 @@
           <td colspan="3"><%= @attendances.count %></td>
           <td colspan="8"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
           <td colspan="5"><%= format("%.2f", @total_working_times.to_f) %></td>
-          <%= form_with(model: @user, url: "#", local: true, method: :patch) do |f| %><P>
-            <td><%= f.collection_select :indicater_check, @superior, :name, :name,{prompt: "上長を選択してください"}, {class: "form-control"} %>                          
-                <br><%= f.submit " 申請 ", class: "btn btn-primary" %>
-            </td>
-          <% end %>
+          <!--<td>
+            <%= form_with(model: @user, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>              
+              <%= f.hidden_field :one_month_approval_status, value: "申請中" %><P>
+                <%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: "上長を選択してください"}, {class: "form-control"} %>                          
+                  <br><%= f.submit " 申請 ", class: "btn btn-primary" %>              
+            <% end %>
+          </td>-->
         </tr>      
     </tfoot>
   </table>

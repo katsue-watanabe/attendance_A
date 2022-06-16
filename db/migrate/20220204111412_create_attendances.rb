@@ -4,14 +4,15 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.date :worked_on
       t.datetime :started_at
       t.datetime :finished_at
-      t.datetime :change_before_started_at
-      t.datetime :change_before_finished_at      
+      t.datetime :restarted_at
+      t.datetime :refinished_at      
       t.time :overwork_end_time
       t.boolean :next_day
       t.boolean :overwork_next_day
       t.string :note      
       t.string :overwork_status
       t.string :attendance_change_status
+      t.string :attendance_change_check_status
       t.string :one_month_approval_status
       t.string :process_content
       t.string :superior_confirmation
