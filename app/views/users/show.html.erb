@@ -165,24 +165,20 @@
     </tbody>
 
     <tfoot>      
-        <tr>        
-          <td colspan="3">累計日数</td>
-          <td colspan="8">総合勤務時間</td>
-          <td colspan="5">累計在社時間</td>
-          <td colspan="2">所属長承認 未</td>          
-        </tr>
-        <tr>
-          <td colspan="3"><%= @attendances.count %></td>
-          <td colspan="8"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
-          <td colspan="5"><%= format("%.2f", @total_working_times.to_f) %></td>
-          <!--<td>
-            <%= form_with(model: @user, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>              
-              <%= f.hidden_field :one_month_approval_status, value: "申請中" %><P>
-                <%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: "上長を選択してください"}, {class: "form-control"} %>                          
-                  <br><%= f.submit " 申請 ", class: "btn btn-primary" %>              
-            <% end %>
-          </td>-->
-        </tr>      
+      <tr>        
+        <td colspan="3">累計日数<br><%= @attendances.count %></td>
+        <td colspan="8">総合勤務時間<br><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
+        <td colspan="5">累計在社時間<br><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="2">
+          <%= form_with(model: @user, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>
+            <%= f.hidden_field :one_month_approval_status, value: "申請中" %>
+            <%= f.hidden_field :worked_on, value: @first_day %>           
+            所属長承認            
+            <br><%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %>                         
+            <%= f.submit " 申請 ", class: "btn btn-primary" %>              
+          <% end %>            
+        </td>          
+      </tr>      
     </tfoot>
   </table>
 </div>
@@ -191,4 +187,4 @@
 <div id="edit-overwork" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit-attendance-change" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<div id="edit_one-month-approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit-one-month-approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

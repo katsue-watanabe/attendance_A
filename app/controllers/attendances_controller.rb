@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :update_month_request]  
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :edit_attendance_change, :update_attendance_change, :update_month_request]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice, :update_month_request]
   before_action :set_one_month, only: :edit_one_month
@@ -39,6 +39,7 @@ class AttendancesController < ApplicationController
       end      
     end    
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+    debugger
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -46,8 +47,7 @@ class AttendancesController < ApplicationController
   end
 
   #勤怠変更の承認
-  def edit_attendance_change
-    @user = User.find(params[:id])                 
+  def edit_attendance_change                     
     @attendances = Attendance.where(superior_attendance_change_confirmation: @user.id, attendance_change_status: "申請中").order(:user_id, :worked_on).group_by(&:user_id)
   end
 
@@ -116,18 +116,48 @@ class AttendancesController < ApplicationController
         flash[:success] = "残業申請の承認結果を送信しました。"       
     end
   end
+  
+  def edit_month_request
+  end
 
-  #1ヶ月分の勤怠申請
-  #def update_month_request
-    #@attendance = @user.attendances.find_by(worked_on: params[:user][:worked_on])    
-    #if params[:user][:superior_month_notice_confirmation].blank?
-      #flash[:danger]= "所属長を選択してください。"
-    #else    
-      #@attendance.update(month_request_params)
-      #flash[:success] = "#{@user.name}の1か月分の申請をしました。"
-    #end
-    #redirect_to user_url(@user)        
-  #end
+  #1ヶ月分の勤怠申請    
+  def update_month_request         
+    if params[:user][:superior_month_notice_confirmation].present?    
+      @attendance.update(month_request_params)
+      flash[:success] = "#{@user.name}の1か月分の申請をしました。"
+    else
+      flash[:danger]= "所属長を選択してください。"
+    end
+    redirect_to user_url(@user)        
+  end
+
+   所属長の承認
+  def edit_one_month_approval
+    @user = User.find(params[:id])                 
+    @attendances = Attendance.where(superior_month_notice_confirmation: @user.id, one_month_approval_status: "申請中").order(:user_id, :worked_on).group_by(&:user_id)   
+  end
+
+  def update_one_month_approval
+    month_approval_params.each do |id, item|
+      attendance = Attendance.find(id)
+      if month_approval_params[id][:approval_check]
+        if month_approval_params[id][:superior_month_approval_confirmation] == "承認"
+          attendance.one_month_approval_check_status = "所属長承認済"
+          attendance.superior_month_notice_confirmation = nil
+        elsif month_approval_params[id][:superior_month_approval_confirmation] == "否認"
+          attendance.one_month_approval_check_status = "所属長否認済"
+          attendance.superior_month_notice_confirmation = nil 
+        else month_approval_params[id][:superior_month_approval_confirmation] == "なし"
+          attendance.one_month_approval_check_status = "所属長承認なし"
+          attendance.superior_month_notice_confirmation = nil
+        end
+      else
+        flash[:danger] = "承認確認のチェックを入れてください。"        
+      end
+      attendance.update(item)
+        flash[:success] = "残業申請の承認結果を送信しました。"       
+    end
+  end
 
   def list_of_employees
     @users = User.all.includes(:attendances)
@@ -160,7 +190,6 @@ class AttendancesController < ApplicationController
     end
     
     def month_request_params
-      params.require(:user).permit(attendances: [:superior_month_notice_confirmation, :one_month_approval_status])[:attendances]
-    end
-        
+      params.require(:user).permit(:workd_on, :superior_month_notice_confirmation, :one_month_approval_status)
+    end        
 end

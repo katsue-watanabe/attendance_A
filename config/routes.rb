@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
       # １ヶ月分の勤怠申請
+      get 'attendances/edit_one_month'
       patch 'attendances/update_month_request'
       # 出勤社員 
       get 'list_of_employees'     

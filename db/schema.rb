@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.string "attendance_change_status"
     t.string "attendance_change_check_status"
     t.string "one_month_approval_status"
+    t.string "one_month_approval_check_status"
     t.string "process_content"
     t.string "superior_confirmation"
     t.string "superior_notice_confirmation"
