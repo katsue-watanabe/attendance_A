@@ -9,7 +9,7 @@
     </div>    
     <div class="modal-body">
       <%= form_with(model: @user, url: update_one_month_approval_user_attendance_path(@user), local: true, method: :patch) do |f| %>
-        <% @attendances.each do |id, attendances| %>
+        <% @month_attendances.each do |id, attendances| %>
           <h1 class="modal-title">【<%= User.find(id).name %>からの1ヶ月分の勤怠申請】</h1>
           <table class="table table-bordered table-condensed table-hover" id="table-attendances">            
             <thead>
@@ -24,8 +24,8 @@
               <% attendances.each do |day| %>              
                 <%= f.fields_for "attendances[]", day do |attendance| %>                                  
                   <tr>
-                    <td><%= day.worked_on.month %></td>                    
-                    <td><%= attendance.select :superior_one_month_approval_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
+                    <td><%= day.worked_on.month %>月</td>                    
+                    <td><%= attendance.select :superior_month_approval_confirmation,  [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
                     <td><%= attendance.check_box :approval_check, {}, true, false %></td>
                     <td><%= link_to "確認", user_path(id, date: day.worked_on.beginning_of_month), target: :_blank, rel: "noopener noreferrer", class: "btn btn-primary" %>
                     </td>
