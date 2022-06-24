@@ -39,7 +39,6 @@ class AttendancesController < ApplicationController
       end      
     end    
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-    debugger
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -141,15 +140,12 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       if month_approval_params[id][:approval_check]
         if month_approval_params[id][:superior_month_approval_confirmation] == "承認"
-          attendance.one_month_approval_check_status = "所属長承認済"
-          attendance.superior_month_notice_confirmation = nil
-        elsif month_approval_params[id][:superior_month_approval_confirmation] == "否認"
-          attendance.one_month_approval_check_status = "所属長否認済"
-          attendance.superior_month_notice_confirmation = nil 
-        else month_approval_params[id][:superior_month_approval_confirmation] == "なし"
-          attendance.one_month_approval_check_status = "所属長承認なし"
-          attendance.superior_month_notice_confirmation = nil
-        end
+          attendance.one_month_approval_check_status = "承認済"
+          attendance.one_month_approval_status = nil
+        else month_approval_params[id][:superior_month_approval_confirmation] == "否認"
+          attendance.one_month_approval_check_status = "否認済"
+          attendance.one_month_approval_status = nil       
+        end      
       else
         flash[:danger] = "承認確認のチェックを入れてください。"        
       end
