@@ -170,17 +170,16 @@
         <td colspan="8">総合勤務時間<br><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
         <td colspan="5">累計在社時間<br><%= format("%.2f", @total_working_times.to_f) %></td>
         <td colspan="2">
-          <%= form_with(model: @user, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>
+          <%= form_with(model: @attendance, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>
             <%= f.hidden_field :one_month_approval_status, value: "申請中" %>
-            <%= f.hidden_field :worked_on, value: @first_day %>           
-            所属長承認
-              <% day = @attendances.find_by(worked_on: @first_day) %>              
-                <% if day.one_month_approval_status.nil? && day.one_month_approval_check_status.nil? %>                
-                 未
-                <% elsif day.one_month_approval_status.present? && day.one_month_approval_check_status.nil? %>
-                  <%= day.superior_month_notice_confirmation[] %>へ申請中
-                <% else day.one_month_approval_check_status.present? %>
-                  <%= day.one_month_approval_check_status %>
+            <%= f.hidden_field :day, value: @first_day %>          
+                           
+                <% if @attendance.one_month_approval_status.nil? && @attendance.one_month_approval_check_status.nil? %>                
+                 所属長承認 未
+                <% elsif @attendance.one_month_approval_status.present? && @attendance.one_month_approval_check_status.nil? %>
+                  <%= User.find(@attendance.superior_month_notice_confirmation).name %>へ<%= @attendance.one_month_approval_status %>
+                <% else @attendance.one_month_approval_check_status.present? %>
+                  <%= @attendance.one_month_approval_check_status %>
                 <% end %>                                      
             <br><%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %>                         
             <%= f.submit " 申請 ", class: "btn btn-primary" %>              

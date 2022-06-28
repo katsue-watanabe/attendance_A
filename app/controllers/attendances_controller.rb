@@ -1,7 +1,7 @@
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :edit_attendance_change, :update_attendance_change, :update_month_request, :edit_one_month_approval]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
-  before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice, :update_month_request, :edit_one_month_approval]
+  before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice]
   before_action :set_one_month, only: :edit_one_month
   before_action :set_superior, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork, :update_month_request]
  
@@ -120,9 +120,9 @@ class AttendancesController < ApplicationController
   end
 
   #1ヶ月分の勤怠申請    
-  def update_month_request         
-    if params[:user][:superior_month_notice_confirmation].present?    
-      @attendance.update(month_request_params)
+  def update_month_request 
+    @attendance = @user.attendances.find_by(worked_on: params[:attendance][:day])        
+    if @attendance.update(month_request_params)
       flash[:success] = "#{@user.name}の1か月分の申請をしました。"
     else
       flash[:danger]= "所属長を選択してください。"
@@ -185,7 +185,7 @@ class AttendancesController < ApplicationController
     end
     
     def month_request_params
-      params.require(:user).permit(:workd_on, :superior_month_notice_confirmation, :one_month_approval_status)
+      params.require(:attendance).permit(:superior_month_notice_confirmation, :one_month_approval_status)
     end
     
     def month_approval_params
