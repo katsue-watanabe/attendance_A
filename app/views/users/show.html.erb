@@ -55,7 +55,7 @@
 </div>
 <div><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(@user), class: "btn btn-primary" %>  
   <%= link_to "csv出力", user_path(format: :csv), class: "btn btn-primary" %>
-  <br><%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary"%>
+  <br><%= link_to "勤怠修正ログ（承認済）", log_page_user_attendance_path(@user), remote: true, class: "btn btn-primary"%>
 </div>
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -172,15 +172,14 @@
         <td colspan="2">
           <%= form_with(model: @attendance, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>
             <%= f.hidden_field :one_month_approval_status, value: "申請中" %>
-            <%= f.hidden_field :day, value: @first_day %>          
-                           
-                <% if @attendance.one_month_approval_status.nil? && @attendance.one_month_approval_check_status.nil? %>                
-                 所属長承認 未
-                <% elsif @attendance.one_month_approval_status.present? && @attendance.one_month_approval_check_status.nil? %>
-                  <%= User.find(@attendance.superior_month_notice_confirmation).name %>へ<%= @attendance.one_month_approval_status %>
-                <% else @attendance.one_month_approval_check_status.present? %>
-                  <%= @attendance.one_month_approval_check_status %>
-                <% end %>                                      
+            <%= f.hidden_field :day, value: @first_day %>                          
+              <% if @attendance.one_month_approval_status.nil? && @attendance.one_month_approval_check_status.nil? %>                
+                所属長承認 未
+              <% elsif @attendance.one_month_approval_status.present? && @attendance.one_month_approval_check_status.nil? %>
+                <%= User.find(@attendance.superior_month_notice_confirmation).name %>へ<%= @attendance.one_month_approval_status %>
+              <% else @attendance.one_month_approval_check_status.present? %>
+                <%= @attendance.one_month_approval_check_status %>
+              <% end %>                                      
             <br><%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %>                         
             <%= f.submit " 申請 ", class: "btn btn-primary" %>              
           <% end %>            
@@ -195,3 +194,4 @@
 <div id="edit-overwork-notice" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit-attendance-change" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit-one-month-approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="log-page" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

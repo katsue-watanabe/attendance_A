@@ -1,8 +1,8 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :edit_attendance_change, :update_attendance_change, :update_month_request, :edit_one_month_approval]  
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_overwork_notice, :edit_attendance_change, :update_attendance_change, :update_month_request, :edit_one_month_approval, :log_page]  
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :set_attendance, only: [:update, :edit_overwork, :update_overwork, :edit_overwork_notice]
-  before_action :set_one_month, only: :edit_one_month
+  before_action :set_one_month, only: [:edit_one_month, :log_page]
   before_action :set_superior, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork, :update_month_request]
  
   
@@ -156,6 +156,10 @@ class AttendancesController < ApplicationController
 
   def list_of_employees
     @users = User.all.includes(:attendances)
+  end
+
+  def log_page
+    @attendances = @user.attendances.where(attendance_change_check_status: "勤怠変更承認済").order(:user_id, :worked_on).group_by(&:user_id)
   end
 
   private
