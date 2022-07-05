@@ -41,7 +41,7 @@
                     <td><%= day.process_content %></td>
                     <td><%= attendance.select :superior_notice_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
                     <td><%= attendance.check_box :is_check, {}, true, false %></td>
-                    <td><%= link_to "確認", user_path(id, date: day.worked_on.beginning_of_month), target: :_blank, rel: "noopener noreferrer", class: "btn btn-primary" %>
+                    <td><%= link_to "確認", user_path(User.find(id), worked_on: day.worked_on), target: :_blank, rel: "noopener noreferrer", class: "btn btn-primary" %>
                     </td>
                   </tr>
                 <% end %>

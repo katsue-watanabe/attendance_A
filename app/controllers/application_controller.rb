@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
     @user = User.find(params[:id])
   end
 
+  def set_user_user_id
+    @user = User.find(params[:user_id])
+  end
+
   def logged_in_user
     unless logged_in?
       store_location
@@ -33,9 +37,9 @@ class ApplicationController < ActionController::Base
   end
 
   # ページ出力前に1ヶ月分のデータの存在を確認・セットします。
-  def set_one_month 
-    @first_day = params[:date].nil? ?
-    Date.current.beginning_of_month : params[:date].to_date
+  def set_one_month
+    #パラムスの日付がない時は当月の最初の日そうでない時はパラムスの日 
+    @first_day = params[:date].nil? ? Date.current.beginning_of_month : params[:date].to_date
     @last_day = @first_day.end_of_month
     one_month = [*@first_day..@last_day]
   

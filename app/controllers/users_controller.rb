@@ -39,6 +39,12 @@ class UsersController < ApplicationController
     end   
   end
 
+  def confirmation_show
+    @worked_sum = @attendances.where.not(started_at: nil).count    
+    @superior = User.where(superior: true).where.not(id: @user.id)
+    @attendance = @user.attendances.find_by(worked_on: @first_day)
+  end
+
   def new
     @user = User.new
   end
@@ -75,6 +81,9 @@ class UsersController < ApplicationController
     @users = User.all.includes(:attendances)
   end
 
+  def confirmation
+  end
+
   private
 
     def set_user
@@ -100,10 +109,10 @@ class UsersController < ApplicationController
         attendances.each do |day|
           column_values = [
             l(day.worked_on, format: :short),
+            day.started_at&.strftime("%H"),
+            day.finished_at&.strftime("%M"),
             day.restarted_at&.strftime("%H"),
-            day.restarted_at&.strftime("%M"),
-            day.restarted_at&.strftime("%H"),
-            day.restarted_at&.strftime("%M")
+            day.refinished_at&.strftime("%M")
           ]
         # csv << column_valueshは表の行に入る値を定義します。
           csv << column_values

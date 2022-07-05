@@ -18,7 +18,9 @@ Rails.application.routes.draw do
       get 'attendances/edit_one_month_request'
       patch 'attendances/update_month_request'
       # 出勤社員 
-      get 'list_of_employees'     
+      get 'list_of_employees'
+      # 確認画面 
+      get 'confirmation_show'     
     end
     resources :attendances, only: [:update] do
       member do
