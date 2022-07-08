@@ -9,8 +9,14 @@
     </div>
     <h1 class="modal-title">【勤怠ログ】</h1>    
     <div class="modal-body">        
-      <%= form_with(model: @attendances, url: log_page_user_attendance_path(@user, date: @first_day), remote: true, method: :get) do |f| %>
-        <%= f.date_select(:worked_on_log, start_year: 2020, end_year: 2022, discard_day: true, class: "form-control search-date" ) %>     
+      <%= form_with(url: log_page_user_attendance_path(@user), remote: true, method: :get) do |f| %>
+        <!--<%= f.date_select(:worked_on_log, start_year: 2020, end_year: 2022, discard_day: true, class: "search-date" ) %>-->
+        <tr>
+          <td width="80"><%= f.date_select :select_year, {discard_month: "true", selected: @first_day}, class: "search-date" %></td>
+        </tr>
+        <tr>
+          <td width="80"><%= f.date_select :select_month, {discard_year: "true", discard_day: "true", selected: @first_day}, class: "search-date" %></td>
+        </tr>
         <br><%= f.submit "検索", class: "btn btn-md btn-primary" %>
       <% end %>       
       <table class="table table-bordered table-condensed table-hover" id="table-attendances">            
@@ -37,8 +43,9 @@
               <td><%= day.restarted_at&.strftime("%R") if day.restarted_at&.present? %></td>                    
               <!--変更後・退勤-->
               <td><%= day.refinished_at&.strftime("%R") if day.refinished_at&.present? %></td>                 
-              <td><%= day.superior_attendance_change_confirmation %></td>
-              <td><%= day.updated_at %></td>                  
+              <!--<td><%= day.superior_attendance_change_confirmation %></td>-->
+              <td><%= User.find(day.superior_attendance_change_confirmation).name %></td>
+              <td><%= day.updated_at.strftime("%F") %></td>                  
             </tr>                
           <% end %>                                
         </tbody>           
