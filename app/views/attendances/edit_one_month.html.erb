@@ -18,7 +18,7 @@
       <tbody>
         <% @attendances.each do |day| %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
-          <%= attendance.hidden_field :attendance_change_status, value: "申請中" %>
+          <%= attendance.hidden_field :attendance_change_status, value: "勤怠変更申請中" %>
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>

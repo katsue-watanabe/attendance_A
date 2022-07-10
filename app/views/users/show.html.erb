@@ -169,13 +169,23 @@
           </td>
           <td><%= day.process_content %></td>
           <td colspan="2">
-            <%= day.overwork_status if day.overwork_status.present? %>
-            <br><%= day.attendance_change_check_status if day.attendance_change_check_status.present? %>                     
+            <!--<%= day.overwork_status if day.overwork_status.present? %>
+            <br><%= day.attendance_change_check_status if day.attendance_change_check_status.present? %>-->
+            <% if day.overwork_status.present? && day.overwork_approval_status.nil? && day.superior_confirmation.present? %>
+              <%= User.find(day.superior_confirmation).name %>へ<%= day.overwork_status %>
+            <% else day.overwork_status.nil? && day.overwork_approval_status.present? && day.superior_confirmation.present? %>
+              <%= day.overwork_approval_status %>
+            <% end %>  
+            <br>
+            <% if day.attendance_change_status.present? && day.attendance_change_check_status.nil? && day.superior_attendance_change_confirmation.present? %>
+              <%= User.find(day.superior_attendance_change_confirmation).name %>へ<%= day.attendance_change_status %>
+            <% else day.attendance_change_status.nil? && day.attendance_change_check_status.present? && day.superior_attendance_change_confirmation.present? %>
+              <%= day.attendance_change_check_status %>
+            <% end %>                     
           </td>          
         </tr>
       <% end %>
     </tbody>
-
     <tfoot>      
       <tr>        
         <td colspan="3">累計日数<br><%= @attendances.count %></td>

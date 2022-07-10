@@ -26,8 +26,8 @@ class UsersController < ApplicationController
     @attendance = @user.attendances.find_by(worked_on: @first_day)
    # @user.attendancesは、Attendance.find_by(user_id: @user.id)
     if current_user.superior?      
-      @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "申請中").count
-      @attendance_change_sum = Attendance.includes(:user).where(superior_attendance_change_confirmation: current_user.id, attendance_change_status: "申請中").count
+      @overwork_sum = Attendance.includes(:user).where(superior_confirmation: current_user.id, overwork_status: "残業申請中").count
+      @attendance_change_sum = Attendance.includes(:user).where(superior_attendance_change_confirmation: current_user.id, attendance_change_status: "勤怠変更申請中").count
       @one_month_approval_sum = Attendance.includes(:user).where(superior_month_notice_confirmation: current_user.id, one_month_approval_status: "申請中").count    
     end
     # csv出力    
@@ -62,12 +62,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(user_params)
+    if user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
-      redirect_to @user
+      redirect_to @user.users_path
     else
       flash[:danger] = "ユーザー情報を更新できません。"
-      render :edit
+      redirect_to users_url
     end
   end
 

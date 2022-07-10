@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.boolean "overwork_next_day"
     t.string "note"
     t.string "overwork_status"
+    t.string "overwork_approval_status"
     t.string "attendance_change_status"
     t.string "attendance_change_check_status"
     t.string "one_month_approval_status"
@@ -62,8 +63,8 @@ ActiveRecord::Schema.define(version: 20220403063510) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2022-07-01 23:00:00"
-    t.datetime "work_time", default: "2022-07-01 22:30:00"
+    t.datetime "basic_time", default: "2022-07-08 23:00:00"
+    t.datetime "work_time", default: "2022-07-08 22:30:00"
     t.time "designated_work_start_time", default: "2000-01-01 23:00:00"
     t.time "designated_work_end_time", default: "2000-01-01 08:00:00"
     t.boolean "superior", default: false

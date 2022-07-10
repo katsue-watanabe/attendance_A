@@ -11,6 +11,7 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.boolean :overwork_next_day
       t.string :note      
       t.string :overwork_status
+      t.string :overwork_approval_status
       t.string :attendance_change_status
       t.string :attendance_change_check_status
       t.string :one_month_approval_status

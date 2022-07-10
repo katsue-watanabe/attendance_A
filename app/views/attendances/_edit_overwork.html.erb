@@ -10,7 +10,7 @@
     </div>    
     <div class="modal-body">
       <%= form_with(model: @attendance, url: update_overwork_user_attendance_path, local: true, method: :patch) do |f| %>
-      <%= f.hidden_field :overwork_status, value: "申請中" %>                                                   
+      <%= f.hidden_field :overwork_status, value: "残業申請中" %>                                                   
         <table class="table table-bordered table-condensed table-hover" id="table-attendances">      
           <thead>
             <tr>
