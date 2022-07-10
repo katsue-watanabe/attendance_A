@@ -3,30 +3,34 @@
 
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
-    <%= form_with(model: @user, local: true) do |f| %>
-      <%= render 'shared/error_messages', object: @user %>
-
+    <%= form_with(model: @user, url: user_path(@user), local: true, method: :patch) do |f| %>
       
-      <%= f.label :name, class: "label-user--edit" %>
+      <%= f.label :"名前", class: "label-user--edit" %>
       <%= f.text_field :name, class: "form-control" %>
 
-      <%= f.label :email, class: "label-user--edit" %>
+      <%= f.label :"メールアドレス", class: "label-user--edit" %>
       <%= f.email_field :email, class: "form-control" %>
 
-      <%= f.label :department, class: "label-user--edit" %>
+      <%= f.label :"所属", class: "label-user--edit" %>
       <%= f.text_field :department, class: "form-control" %>
 
-      <%= f.label :employee_number, class: "label-user--edit" %>
+      <%= f.label :"社員番号", class: "label-user--edit" %>
       <%= f.number_field :employee_number, class: "form-control", min: 001, max: 020 %>
 
-      <%= f.label :card_id, class: "label-user--edit" %>
+      <%= f.label :"カードID", class: "label-user--edit" %>
       <%= f.number_field :card_id, class: "form-control", min: 001, max: 020 %>
 
-      <%= f.label :password, class: "label-user--edit" %>
+      <%= f.label :"パスワード", class: "label-user--edit" %>
       <%= f.password_field :password, class: "form-control" %>
 
-      <%= f.label :password_confirmation, class: "label-user--edit" %>
-      <%= f.password_field :password_confirmation, class: "form-control" %>
+      <%= f.label :"基本時間", class: "label-user--edit" %>
+      <%= f.time_field :basic_time, class: "form-control" %>
+
+      <%= f.label :"指定勤務開始時間", class: "label-user--edit" %>
+      <%= f.time_field :designated_work_start_time, class: "form-control" %>
+
+      <%= f.label :"指定勤務終了時間", class: "label-user--edit" %>
+      <%= f.time_field :designated_work_end_time, class: "form-control" %>
 
       <%= f.submit "更新", class: "btn btn-primary btn-block btn-user--edit" %>
     <% end %>

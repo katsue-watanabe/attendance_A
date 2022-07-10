@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   resources :users do
     collection {post :import}    
     member do
+      get 'edit_basic_info'
+      patch 'update_basic_info'
       # １ヶ月分の変更申請      
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
@@ -18,9 +20,7 @@ Rails.application.routes.draw do
       get 'attendances/edit_one_month_request'
       patch 'attendances/update_month_request'
       # 出勤社員 
-      get 'list_of_employees'
-      # 確認画面 
-      get 'confirmation_show'     
+      get 'list_of_employees'        
     end
     resources :attendances, only: [:update] do
       member do

@@ -27,15 +27,7 @@ class ApplicationController < ActionController::Base
   def admin_user
     redirect_to root_url unless current_user.admin?
   end
-
-  # 管理者は勤怠画面の表示と編集は不可
-  def admin_impossible
-    if current_user.admin?
-      flash[:danger] = "管理者は勤怠画面の表示および編集はできません。"
-      redirect_to users_url
-    end
-  end
-
+ 
   # ページ出力前に1ヶ月分のデータの存在を確認・セットします。
   def set_one_month
     #パラムスの日付がない時は当月の最初の日そうでない時はパラムスの日 

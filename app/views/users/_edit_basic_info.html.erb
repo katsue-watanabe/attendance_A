@@ -1,6 +1,6 @@
-<% provide(:title, 'Edit') %>
+<% provide(:title, 'edit_basic_info') %>
 
-<%= form_with(model: user, local: true) do |f| %>
+<%= form_with(model: user, url: update_basic_info_user_path(user), local: true, method: :patch) do |f| %>
   
   <%= f.label :"名前", class: "label-user--edit" %>
   <%= f.text_field :name, class: "form-control" %>

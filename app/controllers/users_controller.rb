@@ -1,9 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :list_of_employees]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: :destroy
-  before_action :admin_impossible, only: :show
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :list_of_employees]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy,:edit_basic_info, :update_basic_info]
+  before_action :correct_user, only: [:edit, :update, :edit_basic_info, :update_basic_info]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info] 
   before_action :set_one_month, only: :show
 
   def index
@@ -39,12 +38,6 @@ class UsersController < ApplicationController
     end   
   end
 
-  def confirmation_show
-    @worked_sum = @attendances.where.not(started_at: nil).count    
-    @superior = User.where(superior: true).where.not(id: @user.id)
-    @attendance = @user.attendances.find_by(worked_on: @first_day)
-  end
-
   def new
     @user = User.new
   end
@@ -62,13 +55,24 @@ class UsersController < ApplicationController
   end
 
   def update
-    if user.update_attributes(user_params)
+    if @user.update(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
-      redirect_to @user.users_path
     else
       flash[:danger] = "ユーザー情報を更新できません。"
       redirect_to users_url
     end
+  end
+
+  def edit_basic_info
+  end
+
+  def update_basic_info
+    if @user.update_attributes(basic_info_params)
+      flash[:success] = "ユーザー情報を更新しました。"
+    else
+      flash[:danger] = "ユーザー情報を更新できません。"     
+    end
+    redirect_to @user
   end
 
   def destroy
@@ -90,12 +94,12 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
     end
 
-    def user_params
+    def basic_info_params
       params.require(:user).permit(:name, :email, :department, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
 
-    def basic_info_params
-      params.require(:user).permit(:department, :basic_time, :work_time)
+    def user_params
+      params.require(:user).permit(:name, :email, :department, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     def send_attndances_csv(attendances)

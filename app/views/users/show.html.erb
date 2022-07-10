@@ -2,7 +2,7 @@
 <div>
   <table class="table table-bordered table-condensed user-table">
     <tr>
-      <% if current_user?(@user) %>
+      <% if current_user?(@user) || current_user.admin? %>
         <td>
           <%= link_to "←", user_path(date: @first_day.prev_month), class: "btn btn-primary" %>
           <%= l(@first_day, format: :middle) %>時間管理表
@@ -57,7 +57,7 @@
     </div>   
   <% end %>
 </div>
-<% if current_user?(@user) %>
+<% if current_user?(@user) || current_user.admin? %>
   <div><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>  
     <%= link_to "csv出力", user_path(format: :csv), class: "btn btn-primary" %>
     <br><%= link_to "勤怠修正ログ（承認済）", log_page_user_attendance_path(@user), remote: true, class: "btn btn-primary"%>
@@ -99,7 +99,7 @@
       <% @attendances.each do |day| %>
         <tr>          
           <td>
-            <% if current_user?(@user) %>
+            <% if current_user?(@user) || current_user.admin? %>
               <%= link_to "残業申請", edit_overwork_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %>
             <% end %>                        
           </td>                  
@@ -147,7 +147,7 @@
             <% end %>
           </td>            
           <td>
-            <% if current_user?(@user) %>
+            <% if current_user?(@user) || current_user.admin? %>
               <% if (Date.current == day.worked_on) && day.started_at.present? && day.finished_at.nil? %>
                 <%= link_to "退勤", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
               <% end %>
