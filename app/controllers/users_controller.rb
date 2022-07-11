@@ -56,9 +56,9 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      flash[:success] = "ユーザー情報を更新しました。"
+      flash[:success] = "基本情報を更新しました。"
     else
-      flash[:danger] = "ユーザー情報を更新できません。"
+      flash[:danger] = "基本情報を更新できません。"
       redirect_to users_url
     end
   end
@@ -68,11 +68,11 @@ class UsersController < ApplicationController
 
   def update_basic_info
     if @user.update_attributes(basic_info_params)
-      flash[:success] = "ユーザー情報を更新しました。"
+      flash[:success] = "社員情報を更新しました。"
     else
-      flash[:danger] = "ユーザー情報を更新できません。"     
+      flash[:danger] = "社員情報を更新できません。"     
     end
-    redirect_to @user
+    redirect_to users_url
   end
 
   def destroy
