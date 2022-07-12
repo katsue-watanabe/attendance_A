@@ -12,13 +12,13 @@
     <div class="modal-body">
       <%= form_with(model: @base, local: true, method: :post) do |f| %>
 
-        <%= f.label :base_number, class: "label-new" %>
+        <%= f.label :"拠点番号", class: "label-new" %>
         <%= f.text_field :base_number, class: "form-control" %>
 
-        <%= f.label :base_branch, class: "label-new" %>
+        <%= f.label :"拠点名", class: "label-new" %>
         <%= f.text_field :base_branch, class: "form-control" %>
 
-        <%= f.label :work_type, class: "label-new" %>
+        <%= f.label :"拠点種類", class: "label-new" %>
         <%= f.text_field :work_type, class: "form-control" %>            
 
         <div class="center">

@@ -36,18 +36,14 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        if attendances_params[:superior_attendance_change_confirmation].present?
-          attendance.update_attributes!(item)
-          flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-        else
-          flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-        end
-        redirect_to user_url(date: params[:date]) and return
-      end
-    rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-      flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-      redirect_to attendances_edit_one_month_user_url(date: params[:date])
-    end       
+        attendance.update_attributes!(item)    
+      end      
+    end    
+    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+    redirect_to user_url(date: params[:date])
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to attendances_edit_one_month_user_url(date: params[:date])       
   end
 
   #勤怠変更の承認
@@ -175,8 +171,8 @@ class AttendancesController < ApplicationController
     #@attendances = @user.attendances.where(worked_on: {}, attendance_change_check_status: "承認済").order(:user_id, :worked_on).group_by(&:user_id)
     #@first_day = Date.current.beginning_of_month
     @last_day = @first_day.end_of_month   
-    #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: “勤怠変更承認済“).order(:worked_on)
-    @attendances = @user.attendances.where(worked_on: @first_day..@last_day, attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
+    #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day, superior_notice_confirmation: "承認").order(:worked_on)
   end  
 
   private

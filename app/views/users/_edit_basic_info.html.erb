@@ -9,7 +9,7 @@
   <%= f.email_field :email, class: "form-control" %>
 
   <%= f.label :"所属", class: "label-user--edit" %>
-  <%= f.text_field :department, class: "form-control" %>
+  <%= f.text_field :affiliation, class: "form-control" %>
 
   <%= f.label :"社員番号", class: "label-user--edit" %>
   <%= f.number_field :employee_number, class: "form-control", min: 001, max: 050 %>
@@ -21,7 +21,7 @@
   <%= f.password_field :password, class: "form-control" %>
 
   <%= f.label :"基本時間", class: "label-user--edit" %>
-  <%= f.time_field :basic_time, class: "form-control" %>
+  <%= f.time_field :basic_work_time, class: "form-control" %>
 
   <%= f.label :"指定勤務開始時間", class: "label-user--edit" %>
   <%= f.time_field :designated_work_start_time, class: "form-control" %>

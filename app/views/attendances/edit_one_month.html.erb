@@ -31,7 +31,7 @@
                     <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
                     <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
                   <% else %>
-                    <%= str_times = working_next_times(day.restarted_at, day.refinished_at) %>
+                    <%= str_times = working_overwork_times(day.restarted_at, day.refinished_at, day.next_day) %>
                     <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>
                   <% end %>                             
                 <% end %>            
