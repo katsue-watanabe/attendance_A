@@ -58,9 +58,9 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       flash[:success] = "基本情報を更新しました。"
     else
-      flash[:danger] = "基本情報を更新できません。"
-      redirect_to users_url
+      flash[:danger] = "基本情報を更新できません。"      
     end
+    redirect_to edit_user_url
   end
 
   def edit_basic_info

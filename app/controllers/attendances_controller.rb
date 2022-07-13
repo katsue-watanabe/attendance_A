@@ -36,11 +36,29 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        attendance.update_attributes!(item)    
-      end      
-    end    
-    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-    redirect_to user_url(date: params[:date])
+        if item[:superior_attendance_change_confirmation].present?
+           #指示者を選択している場合
+          if item[:restarted_at].blank? && item[:refinished_at].present?
+            flash[:danger] = "出社時間を入力してください。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif item[:restarted_at].present? && item[:refinished_at].blank?
+            flash[:danger] = "退社時間を入力してください。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif item[:restarted_at].blank? && item[:refinished_at].blank?  
+            flash[:danger] = "勤務時間がありません"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return        
+          elsif item[:note].blank?
+            flash[:danger] = "備考欄を記入して下さい。" 
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          end #if end 指示者が選択された場合で、時間が記入されていて成功 
+          attendance.update_attributes!(item)
+          flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+        else
+          flash[:danger] = "所属長を選択してください。" 
+        end
+        redirect_to user_url(date: params[:date]) and return
+      end
+    end   
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])       
@@ -85,7 +103,7 @@ class AttendancesController < ApplicationController
       @attendance.update(overwork_params)
       flash[:success] = "#{@user.name}の残業を申請しました。"
     else
-      flash[:danger] = "指示者を選択してください。"
+      flash[:danger] = "所属長を選択してください。"
     end
     redirect_to user_url(@user)        
   end
@@ -125,7 +143,8 @@ class AttendancesController < ApplicationController
   #1ヶ月分の勤怠申請    
   def update_month_request 
     @attendance = @user.attendances.find_by(worked_on: params[:attendance][:day])        
-    if @attendance.update(month_request_params)
+    if month_request_params[:superior_month_notice_confirmation].present? 
+      @attendance.update(month_request_params)
       flash[:success] = "#{@user.name}の1か月分の申請をしました。"
     else
       flash[:danger]= "所属長を選択してください。"
