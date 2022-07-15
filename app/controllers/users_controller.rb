@@ -110,12 +110,17 @@ class UsersController < ApplicationController
         # csv << column_namesは表の列に入る名前を定義します。
         csv << column_names
         # column_valuesに代入するカラム値を定義します。
-        attendances.each do |day|
+        @attendances = @user.attendances.where(worked_on: @first_day..@last_day, superior_attendance_change_approval_confirmation: "承認").order(:worked_on)
+        @attendances.each do |day|
           column_values = [
             l(day.worked_on, format: :short),
             day.started_at&.strftime("%H"),
+            day.started_at&.strftime("%M"),
+            day.finished_at&.strftime("%H"),
             day.finished_at&.strftime("%M"),
             day.restarted_at&.strftime("%H"),
+            day.restarted_at&.strftime("%M"),
+            day.refinished_at&.strftime("%H"),
             day.refinished_at&.strftime("%M")
           ]
         # csv << column_valueshは表の行に入る値を定義します。

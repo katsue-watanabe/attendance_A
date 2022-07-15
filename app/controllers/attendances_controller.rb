@@ -36,29 +36,13 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:superior_attendance_change_confirmation].present?
-           #指示者を選択している場合
-          if item[:restarted_at].blank? && item[:refinished_at].present?
-            flash[:danger] = "出社時間を入力してください。"
-            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          elsif item[:restarted_at].present? && item[:refinished_at].blank?
-            flash[:danger] = "退社時間を入力してください。"
-            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          elsif item[:restarted_at].blank? && item[:refinished_at].blank?  
-            flash[:danger] = "勤務時間がありません"
-            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return        
-          elsif item[:note].blank?
-            flash[:danger] = "備考欄を記入して下さい。" 
-            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          end #if end 指示者が選択された場合で、時間が記入されていて成功 
+        if item[:superior_attendance_change_confirmation].present?                  
           attendance.update_attributes!(item)
-          flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-        else
-          flash[:danger] = "所属長を選択してください。" 
-        end
-        redirect_to user_url(date: params[:date]) and return
-      end
-    end   
+        end               
+      end       
+    flash[:success] = "1ヶ月分の勤怠情報を申請しました。(※所属長が選択されていない日は申請されません。)"
+    redirect_to user_url(date: params[:date])
+    end      
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])       
@@ -74,7 +58,7 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       if attendance_change_params[id][:change_check]
         if attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "承認"
-          attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更承認済"
+          attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更承認済"          
           attendance.attendance_change_status = nil
         elsif attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "否認"
           attendance.attendance_change_status = "#{current_user.name}から勤怠変更否認済"
@@ -191,7 +175,7 @@ class AttendancesController < ApplicationController
     #@first_day = Date.current.beginning_of_month
     @last_day = @first_day.end_of_month   
     #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
-    @attendances = @user.attendances.where(worked_on: @first_day..@last_day, superior_notice_confirmation: "承認").order(:worked_on)
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day, superior_attendance_change_approval_confirmation: "承認").order(:worked_on)
   end  
 
   private
