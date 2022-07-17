@@ -11,6 +11,7 @@ class Attendance < ApplicationRecord
   def refinished_at_is_invalid_without_a_restarted_at
     errors.add(:started_at, "が必要です") if restarted_at.blank? && refinished_at.present?
   end
+  
 
   
   
