@@ -33,16 +33,24 @@ class AttendancesController < ApplicationController
   end
 
   def update_one_month
+    a_count = 0
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:superior_attendance_change_confirmation].present?                  
+        if (item)[:superior_attendance_change_confirmation].present?
+          attendance.attendance_change_status = "勤怠変更申請中"
+          a_count += 1
           attendance.update_attributes!(item)
-        end               
-      end       
-    flash[:success] = "1ヶ月分の勤怠情報を申請しました。(※所属長が選択されていない日は申請されません。)"
-    redirect_to user_url(date: params[:date])
-    end      
+        end
+      end
+    end
+    if a_count > 0
+      flash[:success] = "勤怠編集を#{a_count}件、申請しました。(※所属長が選択されていない日は申請されません。）"
+      redirect_to user_url(date: params[:date])
+    else
+      flash[:danger] = "上長を選択してください"
+      redirect_to attendances_edit_one_month_user_url(date: params[:date])
+    end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])       
@@ -61,17 +69,17 @@ class AttendancesController < ApplicationController
           attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更承認済"          
           attendance.attendance_change_status = nil
         elsif attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "否認"
-          attendance.attendance_change_status = "#{current_user.name}から勤怠変更否認済"
+           attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更否認済"
           attendance.superior_attendance_change_confirmation = nil 
-        else attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "なし"
-          attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更なし"
+        elsif attendance_change_params[id][:superior_attendance_change_approval_confirmation] == "なし"
+           attendance.attendance_change_check_status = "#{current_user.name}から勤怠変更なし"
           attendance.attendance_change_status = nil
         end
+        attendance.update(item)
+        flash[:success] = "勤怠変更申請の承認結果を送信しました。"
       else
         flash[:danger] = "承認確認のチェックを入れてください。"        
       end
-      attendance.update(item)
-        flash[:success] = "勤怠変更申請の承認結果を送信しました。"       
     end
     redirect_to user_url(@user)
   end
@@ -108,7 +116,7 @@ class AttendancesController < ApplicationController
         elsif overwork_notice_params[id][:superior_notice_confirmation] == "否認"
           attendance.overwork_approval_status = "#{current_user.name}から残業否認済"
           attendance.overwork_status = nil 
-        else overwork_notice_params[id][:superior_notice_confirmation] == "なし"
+        elsif overwork_notice_params[id][:superior_notice_confirmation] == "なし"
           attendance.overwork_approval_status = "#{current_user.name}から残業なし"
           attendance.overwork_status = nil
         end
@@ -148,7 +156,7 @@ class AttendancesController < ApplicationController
         if month_approval_params[id][:superior_month_approval_confirmation] == "承認"
           attendance.one_month_approval_check_status = "#{current_user.name}から承認済"
           attendance.one_month_approval_status = nil
-        else month_approval_params[id][:superior_month_approval_confirmation] == "否認"
+        elsif month_approval_params[id][:superior_month_approval_confirmation] == "否認"
           attendance.one_month_approval_check_status = "#{current_user.name}から否認済"
           attendance.one_month_approval_status = nil       
         end              
@@ -189,11 +197,23 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params
-      params.require(:user).permit(attendances: [:restarted_at, :refinished_at, :next_day, :note, :superior_attendance_change_confirmation, :attendance_change_status])[:attendances]
+      params.require(:user).permit(attendances: [:started_at,
+                                                 :finished_at,
+                                                 :restarted_at,
+                                                 :refinished_at,
+                                                 :next_day, :note, 
+                                                 :superior_attendance_change_confirmation, 
+                                                 :attendance_change_status])[:attendances]
     end
 
     def attendance_change_params
-      params.require(:user).permit(attendances: [:restarted_at, :refinished_at, :note, :change_check, :superior_attendance_change_approval_confirmation,  :attendance_change_check_status])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, 
+                                                 :finished_at,
+                                                 :restarted_at, 
+                                                 :refinished_at,
+                                                 :note, :change_check, 
+                                                 :superior_attendance_change_approval_confirmation,  
+                                                 :attendance_change_check_status])[:attendances]
     end
 
     def overwork_params
@@ -201,7 +221,10 @@ class AttendancesController < ApplicationController
     end
 
     def overwork_notice_params
-      params.require(:user).permit(attendances: [:overwork_end_time, :designated_work_end_time, :is_check, :process_content, :superior_notice_confirmation])[:attendances]
+      params.require(:user).permit(attendances: [:overwork_end_time, 
+                                                 :designated_work_end_time, 
+                                                 :is_check, :process_content, 
+                                                 :superior_notice_confirmation])[:attendances]
     end
     
     def month_request_params
@@ -209,6 +232,8 @@ class AttendancesController < ApplicationController
     end
     
     def month_approval_params
-      params.require(:user).permit(attendances: [:superior_month_approval_confirmation, :approval_check, :one_month_approval_check_status])[:attendances]
+      params.require(:user).permit(attendances: [:superior_month_approval_confirmation, 
+                                                 :approval_check, 
+                                                 :one_month_approval_check_status])[:attendances]
     end
 end

@@ -13,13 +13,13 @@
       <%= form_with(model: @base, local: true, method: :post) do |f| %>
 
         <%= f.label :"拠点番号", class: "label-new" %>
-        <%= f.text_field :base_number, class: "form-control" %>
+        <%= f.number_field :base_number, class: "form-control", min: 1, max: 50 %>
 
         <%= f.label :"拠点名", class: "label-new" %>
         <%= f.text_field :base_branch, class: "form-control" %>
 
         <%= f.label :"拠点種類", class: "label-new" %>
-        <%= f.text_field :work_type, class: "form-control" %>            
+        <%= f.select :work_type, ["出勤", "リモート"], {include_blank: "選択してください。"}, class: "form-control" %>
 
         <div class="center">
           <%= f.submit "拠点の追加", class: "btn btn-primary btn-block btn-new" %>
