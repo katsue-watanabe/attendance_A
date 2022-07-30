@@ -37,18 +37,15 @@ class AttendancesController < ApplicationController
     a_count = 0
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
-        if item[:superior_attendance_change_confirmation].blank? && (item[:restarted_at].present? || item[:refinished_at].present?)
-          flash[:danger] = "上長を選択してください"
-          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-        elsif item[:refinished_at].blank? && (item[:restarted_at].present? || item[:superior_attendance_change_confirmation].present?)
-          flash[:danger] = "退勤時間が必要です。"
-          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-        elsif item[:restarted_at].blank? && (item[:refinished_at].present? || item[:superior_attendance_change_confirmation].present?)
-          flash[:danger] = "出勤時間が必要です。"
-          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-        end
-        attendance = Attendance.find(id)
         if item[:superior_attendance_change_confirmation].present?
+          if item[:refinished_at].blank? && item[:restarted_at].present?
+            flash[:danger] = "退勤時間が必要です。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif item[:restarted_at].blank? && item[:refinished_at].present?
+            flash[:danger] = "出勤時間が必要です。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          end
+          attendance = Attendance.find(id)
           attendance.attendance_change_status = "申請中"
           a_count += 1
           attendance.update_attributes!(item)
@@ -57,6 +54,9 @@ class AttendancesController < ApplicationController
     end
     if a_count > 0
       flash[:success] = "勤怠編集を#{a_count}件、申請しました。"
+      redirect_to user_url(date: params[:date]) and return
+    else
+      flash[:info] = "勤怠編集はありません。"
       redirect_to user_url(date: params[:date]) and return
     end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
@@ -74,12 +74,12 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       if item[:change_check]
         if item[:attendance_change_status] == "承認"
-          attendance.started_at = attendance.restarted_at         
-          attendance.finished_at = attendance.refinished_at
-          if attendance.begin_started.nil? && attendance.begin_finished.nil?
+          if attendance.begin_started.blank? && attendance.begin_finished.blank?
             attendance.begin_started = attendance.started_at
             attendance.begin_finished = attendance.finished_at
           end
+          attendance.started_at = attendance.restarted_at         
+          attendance.finished_at = attendance.refinished_at
         elsif item[:attendance_change_status] == "否認"
           attendance.started_at = attendance.restarted_at         
           attendance.finished_at = attendance.refinished_at
@@ -92,8 +92,6 @@ class AttendancesController < ApplicationController
         item[:change_check] = nil
         attendance.update(item)
         flash[:success] = "勤怠変更申請の承認結果を送信しました。"
-      else
-        flash[:danger] = "承認確認のチェックを入れてください。"        
       end
     end
     redirect_to user_url(@user)

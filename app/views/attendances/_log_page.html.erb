@@ -40,12 +40,12 @@
               <!--変更前・退勤-->
               <td><%= day.begin_finished.strftime("%R") if day.begin_finished.present? %></td>                    
               <!--変更後・出勤-->
-              <td><%= day.restarted_at&.strftime("%R") if day.restarted_at&.present? %></td>                    
+              <td><%= day.started_at.strftime("%R") if day.started_at.present? %></td>                    
               <!--変更後・退勤-->
-              <td><%= day.refinished_at&.strftime("%R") if day.refinished_at&.present? %></td>                 
+              <td><%= day.finished_at.strftime("%R") if day.finished_at.present? %></td>                 
               <!--<td><%= day.superior_attendance_change_confirmation %></td>-->
               <td><%= User.find(day.superior_attendance_change_confirmation).name %></td>
-              <td><%= day.updated_at.strftime("%F") %></td>                  
+              <td><%= l(day.updated_at, format: :long) %></td>                  
             </tr>                
           <% end %>                                
         </tbody>           
