@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(version: 20220722205437) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "last_started"
-    t.datetime "last_finished"
+    t.datetime "begin_started"
+    t.datetime "begin_finished"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(version: 20220722205437) do
     t.string "password_digest"
     t.string "remember_digest"
     t.boolean "admin", default: false
-    t.datetime "basic_work_time", default: "2022-07-23 23:00:00"
-    t.datetime "work_time", default: "2022-07-23 22:30:00"
+    t.datetime "basic_work_time", default: "2022-07-28 23:00:00"
+    t.datetime "work_time", default: "2022-07-28 22:30:00"
     t.time "designated_work_start_time", default: "2000-01-01 23:00:00"
     t.time "designated_work_end_time", default: "2000-01-01 08:00:00"
     t.boolean "superior", default: false

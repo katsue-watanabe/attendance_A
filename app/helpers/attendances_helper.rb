@@ -11,11 +11,11 @@ module AttendancesHelper
   end
 
   # 出勤時間と退勤時間を受け取り、在社時間を計算して返します。
-  def working_times(restart, refinish, next_day)
+  def working_times(start, finish, next_day)
     if next_day
-      format("%.2f", (((refinish - restart) / 60) / 60.0) + 24)
+      format("%.2f", (((finish - start) / 60) / 60.0) + 24)
     else
-      format("%.2f", ((refinish - restart) / 60) / 60.0)
+      format("%.2f", ((finish - start) / 60) / 60.0)
     end
   end
   
@@ -31,7 +31,7 @@ module AttendancesHelper
   def attendance_change_status_text(status)
     case status
     when "申請中"
-      "勤怠変更申請中"
+      "申請中"
     when "否認"
       "勤怠変更否認"
     when "承認"
@@ -45,7 +45,7 @@ module AttendancesHelper
   def overwork_status_text(status)
     case status
     when "申請中"
-      "残業申請中"
+      "申請中"
     when "否認"
       "残業否認済"
     when "承認"

@@ -59,7 +59,7 @@
 </div>
 <% if current_user?(@user) || current_user.admin? %>
   <div><%= link_to "1ヶ月の勤怠編集へ", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>  
-    <%= link_to "csv出力", user_path(format: :csv), class: "btn btn-primary" %>
+    <%= link_to "csv出力", user_path(@user, date: @first_day, format: :csv), class: "btn btn-primary" %>
     <br><%= link_to "勤怠修正ログ（承認済）", log_page_user_attendance_path(@user), remote: true, class: "btn btn-primary"%>
   </div>
 <% end %>
@@ -112,17 +112,13 @@
                      <%= $days_of_the_week[day.worked_on.wday] %>
           </td>
           <td>
-            <% if day.started_at.present? && day.restarted_at.nil? %>
+            <% if day.started_at.present? %>
               <%= day.started_at.strftime("%H") %>
-            <% else %>
-              <%= day.restarted_at&.strftime("%H") %>
             <% end %>
           </td>
           <td>
-            <% if day.started_at.present? && day.restarted_at.nil? %>
+            <% if day.started_at.present? %>
               <%= day.started_at.strftime("%M") %>
-            <% else %>
-              <%= day.restarted_at&.strftime("%M") %>
             <% end %>
           </td>                      
           <td>
@@ -133,17 +129,13 @@
             <% end %>
           </td>                      
           <td>
-            <% if day.finished_at.present? && day.restarted_at.nil? %>
+            <% if day.finished_at.present? %>
               <%= day.finished_at.strftime("%H") %>
-            <% else %>
-              <%= day.refinished_at&.strftime("%H") %>
             <% end %>
           </td>
           <td>
-            <% if day.finished_at.present? && day.refinished_at.nil? %>
+            <% if day.finished_at.present? %>
               <%= day.finished_at.strftime("%M") %>
-            <% else %>
-              <%= day.refinished_at&.strftime("%M") %>
             <% end %>
           </td>            
           <td>
@@ -154,8 +146,8 @@
             <% end %>
           </td>            
           <td>
-            <% if day.restarted_at.present? && day.refinished_at.present? %>              
-              <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
+            <% if day.started_at.present? && day.finished_at.present? %>              
+              <%= str_times = working_times(day.started_at, day.finished_at, day.next_day) %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>            
             <% end %>
           </td>
@@ -169,18 +161,15 @@
           </td>
           <td><%= day.process_content %></td>
           <td colspan="2">
-            <!--<%= day.overwork_status if day.overwork_status.present? %>
-            <br><%= day.attendance_change_check_status if day.attendance_change_check_status.present? %>-->
-            <% if day.overwork_status.present? && day.overwork_approval_status.nil? && day.superior_confirmation.present? %>
-              <%= User.find(day.superior_confirmation).name %>へ<%= day.overwork_status %>
-            <% else day.overwork_status.nil? && day.overwork_approval_status.present? && day.superior_confirmation.present? %>
-              <%= day.overwork_approval_status %>
-            <% end %>  
-            <br>
-            <% if day.attendance_change_status.present? && day.attendance_change_check_status.nil? && day.superior_attendance_change_confirmation.present? %>
-              <%= User.find(day.superior_attendance_change_confirmation).name %>へ<%= day.attendance_change_status %>
-            <% else day.attendance_change_status.nil? && day.attendance_change_check_status.present? && day.superior_attendance_change_confirmation.present? %>
-              <%= day.attendance_change_check_status %>
+            <% if day.overwork_status == "申請中" %>
+              <%= User.find(day.superior_confirmation).name %>へ残業申請中<br>
+            <% elsif (day.overwork_status == "承認") || (day.overwork_status == "否認") %>
+            　<%= User.find(day.superior_confirmation).name %>より残業<%= day.overwork_status %><br>
+            <% end %>
+            <% if day.attendance_change_status == "申請中" %>
+              <%= User.find(day.superior_attendance_change_confirmation).name %>へ勤怠変更申請中
+            <% elsif (day.attendance_change_status == "承認") || (day.attendance_change_status == "否認") %>
+            　<%= User.find(day.superior_attendance_change_confirmation).name %>より勤怠<%= day.attendance_change_status %>
             <% end %>                     
           </td>          
         </tr>
@@ -196,12 +185,12 @@
               <%= form_with(model: @attendance, url: attendances_update_month_request_user_path(@user), local: true, method: :patch) do |f| %>
                 <%= f.hidden_field :one_month_approval_status, value: "申請中" %>
                 <%= f.hidden_field :day, value: @first_day %>                          
-                  <% if @attendance.one_month_approval_status.nil? && @attendance.one_month_approval_check_status.nil? %>                
+                  <% if @attendance.one_month_approval_status.nil? %>                
                     所属長承認 未
-                  <% elsif @attendance.one_month_approval_status.present? && @attendance.one_month_approval_check_status.nil? %>
-                    <%= User.find(@attendance.superior_month_notice_confirmation).name %>へ<%= @attendance.one_month_approval_status %>
-                  <% else @attendance.one_month_approval_check_status.present? %>
-                    <%= @attendance.one_month_approval_check_status %>
+                  <% elsif @attendance.one_month_approval_status == "申請中" %>
+                    <%= User.find(@attendance.superior_month_notice_confirmation).name %>へ勤怠申請中
+                  <% elsif @attendance.one_month_approval_status == "承認" || @attendance.one_month_approval_status == "否認"%>
+                    <%= User.find(@attendance.superior_month_notice_confirmation).name %>より<%= @attendance.one_month_approval_status %>
                   <% end %>                                      
                 <br><%= f.collection_select :superior_month_notice_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %>                         
                 <%= f.submit " 申請 ", class: "btn btn-primary" %>              

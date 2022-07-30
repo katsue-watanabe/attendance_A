@@ -43,7 +43,6 @@
             <tbody>
               <% attendances.each do |day| %>              
                 <%= f.fields_for "attendances[]", day do |attendance| %>
-                <%= attendance.hidden_field :attendance_change_status, value: "申請中" %>                  
                   <tr>
                     <td><%= l(day.worked_on, format: :short) %></td>
                     <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -59,10 +58,10 @@
                     <!--変更後・退勤-->
                     <td><%= day.refinished_at&.strftime("%H") if day.refinished_at&.present? %></td>
                     <td><%= day.refinished_at&.strftime("%M") if day.refinished_at&.present? %></td>
-                    <td><%= day.process_content %></td>
-                    <td><%= attendance.select :superior_attendance_change_approval_confirmation, [["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
+                    <td><%= day.note %></td>
+                    <td><%= attendance.select :attendance_change_status, [["",""], ["なし","なし"], ["申請中","申請中"], ["承認","承認"], ["否認","否認"]], class: "form-control" %></td>
                     <td><%= attendance.check_box :change_check, {}, true, false %></td>
-                    <td><%= link_to "確認", user_path(User.find(id)), target: :_blank, rel: "noopener noreferrer", class: "btn btn-primary", readonly: :true %></td>
+                    <td><%= link_to "確認", user_path(id, date: day.worked_on.beginning_of_month), target: :_blank, rel: "noopener noreferrer", class: "btn btn-primary", readonly: :true %></td>
                   </tr>
                 <% end %>
               <% end %>                                

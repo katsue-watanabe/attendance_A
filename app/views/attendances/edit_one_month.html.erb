@@ -18,43 +18,26 @@
       <tbody>
         <% @attendances.each do |day| %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
-          <%= attendance.hidden_field :attendance_change_status, value: "勤怠変更申請中" %>
+          <!--<　%= attendance.hidden_field :attendance_change_status, value: "申請中" %>-->
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
               <% if !current_user.admin? && (Date.current < day.worked_on) %>
-                <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :restarted_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :refinished_at, readonly: true, class: "form-control" %></td>
               <% else%>
-                <td>
-                  <% if day.started_at.present? %>
-                    <%= attendance.time_field :restarted_at, class: "form-control" %>
-                  <% else %>
-                    <%= attendance.time_field :started_at, class: "form-control" %>
-                  <% end %>
-                </td>
-                <td>
-                  <% if day.finished_at.present? %>
-                    <%= attendance.time_field :refinished_at, class: "form-control" %>
-                  <% else %>
-                    <%= attendance.time_field :finished_at, class: "form-control" %>
-                  <% end %>
-                </td>
+                <td><%= attendance.time_field :restarted_at, class: "form-control" %></td>
+                <td><%= attendance.time_field :refinished_at, class: "form-control" %></td>
               <% end %>
               <td><%= attendance.check_box :next_day, id: "next_day" %></td>
               <td>
                 <% if day.restarted_at.present? && day.refinished_at.present? %>
-                  <% if day.next_day == false %>
-                    <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
-                    <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
-                  <% else %>
-                    <%= str_times = working_overwork_times(day.restarted_at, day.refinished_at, day.next_day) %>
-                    <% @total_working_next_times = @total_working_next_times.to_f + str_times.to_f %>
-                  <% end %>                             
+                  <%= str_times = working_times(day.restarted_at, day.refinished_at, day.next_day) %>
+                  <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
                 <% end %>            
               </td>              
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.collection_select :superior_attendance_change_confirmation, @superior, :id, :name,{prompt: ""}, {class: "form-control"} %></td>              
+              <td><%= attendance.collection_select :superior_attendance_change_confirmation, @superior, :id, :name, {include_blank: true}, {class: "form-control"} %></td>              
             </tr>
           <% end %>
         <% end %>
