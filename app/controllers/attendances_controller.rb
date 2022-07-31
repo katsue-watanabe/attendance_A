@@ -131,11 +131,11 @@ class AttendancesController < ApplicationController
           item[:overwork_status] = nil
           item[:is_check] = nil
         end
+        attendance.update(item)
+        flash[:success] = "残業申請の承認結果を送信しました。"
       else
-        flash[:danger] = "承認確認のチェックを入れてください。"        
+        flash[:danger] = "承認確認のチェックを入れてください。"
       end
-      attendance.update(item)
-        flash[:success] = "残業申請の承認結果を送信しました。"       
     end
     redirect_to user_url(@user)
   end
@@ -167,12 +167,12 @@ class AttendancesController < ApplicationController
         if item[:one_month_approval_status] == "なし"
           item[:one_month_approval_status] = nil
           item[:approval_check] = nil
-        end              
+        end 
+        attendance.update(item)
+        flash[:success] = "勤怠申請の承認結果を送信しました。"
       else
-        flash[:danger] = "承認確認のチェックを入れてください。"        
+        flash[:danger] = "承認確認のチェックを入れてください。" 
       end
-      attendance.update(item)
-        flash[:success] = "勤怠申請の承認結果を送信しました。"       
     end
     redirect_to user_url(@user)
   end
@@ -182,16 +182,18 @@ class AttendancesController < ApplicationController
   end
 
   def log_page
-    if params["select_year(1i)"].nil?
-      @first_day = Date.current.beginning_of_month
-    else
-      @first_day = Date.parse("#{params["select_year(1i)"]}/#{params["select_month(2i)"]}/1")
+    if Attendance.where(one_month_approval_status: "承認").order(:user_id, :worked_on).group_by(&:user_id)   
+      if params["select_year(1i)"].nil?
+        @first_day = Date.current.beginning_of_month
+      else
+        @first_day = Date.parse("#{params["select_year(1i)"]}/#{params["select_month(2i)"]}/1")
+      end
+      #@attendances = @user.attendances.where(worked_on: {}, attendance_change_check_status: "承認済").order(:user_id, :worked_on).group_by(&:user_id)
+      #@first_day = Date.current.beginning_of_month
+      @last_day = @first_day.end_of_month   
+      #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
+      @attendances = @user.attendances.where(worked_on: @first_day..@last_day, attendance_change_status: "承認").order(:worked_on)
     end
-    #@attendances = @user.attendances.where(worked_on: {}, attendance_change_check_status: "承認済").order(:user_id, :worked_on).group_by(&:user_id)
-    #@first_day = Date.current.beginning_of_month
-    @last_day = @first_day.end_of_month   
-    #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
-    @attendances = @user.attendances.where(worked_on: @first_day..@last_day, attendance_change_status: "承認").order(:worked_on)
   end  
 
   private
