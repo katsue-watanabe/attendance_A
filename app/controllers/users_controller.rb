@@ -30,7 +30,7 @@ class UsersController < ApplicationController
       @attendance_change_sum = Attendance.includes(:user).where(superior_attendance_change_confirmation: current_user.id, attendance_change_status: "申請中").count
       @one_month_approval_sum = Attendance.includes(:user).where(superior_month_notice_confirmation: current_user.id, one_month_approval_status: "申請中").count    
     end
-    # csv出力    
+    # csv出力
     respond_to do |format|
       format.html 
       format.csv do |csv|
@@ -117,21 +117,13 @@ class UsersController < ApplicationController
         @attendances.each do |day|
           column_values = [
             l(day.worked_on, format: :short),
-            #day.started_at&.strftime("%H"),
-            # day.started_at&.strftime("%M"),
-            # day.finished_at&.strftime("%H"),
-            # day.finished_at&.strftime("%M"),
-            # day.restarted_at&.strftime("%H"),
-            # day.restarted_at&.strftime("%M"),
-            # day.refinished_at&.strftime("%H"),
-            # day.refinished_at&.strftime("%M")
             $days_of_the_week[day.worked_on.wday],
-            if day.started_at.present?
+            if day.started_at.present? && (day.attendance_change_status == "承認").present?
               l(day.started_at.floor_to(60*15), format: :time)
             else
               ""
             end,
-            if day.finished_at.present?
+            if day.finished_at.present? && (day.attendance_change_status == "承認").present?
               l(day.finished_at.floor_to(60*15), format: :time)
             else
               ""
